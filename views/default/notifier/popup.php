@@ -16,19 +16,21 @@ $notifications = elgg_list_entities(array(
 	'owner_guid' => elgg_get_logged_in_user_guid(),
 ));
 
-// Link to all notifications
-$all_notifications_link = elgg_view('output/url', array(
-	'href' => 'notifier/all',
-	'text' => elgg_echo('notifier:all'),
-	'class' => 'float',
-	'id' => 'notifier-view-all',
-));
-
-$none_message = elgg_echo('notifier:none'); 
+if ($notifications) {
+	// Link to all notifications
+	$link = elgg_view('output/url', array(
+		'href' => 'notifier/all',
+		'text' => elgg_echo('notifier:view:all'),
+		'class' => 'float',
+		'id' => 'notifier-view-all',
+	));
+} else {
+	$link = elgg_echo('notifier:none');
+}
 
 $body = <<<HTML
 	$notifications
-	$all_notifications_link
+	$link
 	<span id="notifier-messages-none" class="hidden">$none_message</span>
 HTML;
 
