@@ -8,6 +8,12 @@
 function notifier_init () {
 	elgg_register_library('elgg:notifier', elgg_get_plugins_path() . 'notifier/lib/notifier.php');
 	
+	// Register the notifier's JavaScript
+	$notifier_js = elgg_get_simplecache_url('js', 'notifier/notifier');
+	elgg_register_simplecache_view('js/notifier/notifier');
+	elgg_register_js('elgg.notifier', $notifier_js);
+	elgg_load_js('elgg.notifier');
+	
 	$notifications = elgg_get_entities(array(
 		'type' => 'object',
 		'subtype' => 'notification',
