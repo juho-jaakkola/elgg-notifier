@@ -6,15 +6,16 @@
  */
 
 function notifier_init () {
-	//elgg_register_library('elgg:notifier', elgg_get_plugins_path() . 'notifier/lib/notifier.php');
+	elgg_register_library('elgg:notifier', elgg_get_plugins_path() . 'notifier/lib/notifier.php');
 	
 	$notifications = elgg_get_entities(array(
 		'type' => 'object',
 		'subtype' => 'notification',
 		'limit' => false,
+		'owner_guid' => elgg_get_logged_in_user_guid()
 	));
 	
-	elgg_dump($notifications);
+	//elgg_dump($notifications);
 	
 	elgg_register_page_handler('notifier', 'notifier_page_handler');
 
@@ -54,10 +55,14 @@ function notifier_init () {
 }
 
 function notifier_page_handler ($page) {
-	//elgg_load_library('elgg:notifier');
+	elgg_load_library('elgg:notifier');
 	
-	// make a URL segment available in page handler script
-	echo notifier_view_page();
+	$params = notifier_get_page_content_list();
+	
+	$body = elgg_view_layout('content', $params);
+	
+	echo elgg_view_page('title', $body);
+	
 	return true;
 }
 
@@ -119,7 +124,8 @@ function notifier_count_unread () {
 		'type' => 'object',
 		'subtype' => 'notification',
 		'limit' => false,
-		'count' => true
+		'count' => true,
+		'owner_guid' => elgg_get_logged_in_user_guid(),
 	));
 }
 
