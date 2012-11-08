@@ -14,6 +14,7 @@ function notifier_init () {
 	elgg_register_js('elgg.notifier', $notifier_js);
 	elgg_load_js('elgg.notifier');
 	
+	/*
 	$notifications = elgg_get_entities(array(
 		'type' => 'object',
 		'subtype' => 'notification',
@@ -21,6 +22,14 @@ function notifier_init () {
 		'owner_guid' => elgg_get_logged_in_user_guid()
 	));
 	
+	$ia = elgg_set_ignore_access(true);
+	foreach ($notifications as $notification) {
+	    $notification->status = 'unread';
+	    $notification->save();
+	}
+	elgg_set_ignore_access($ia);
+	*/
+
 	//elgg_dump($notifications);
 	
 	elgg_register_page_handler('notifier', 'notifier_page_handler');
@@ -63,7 +72,14 @@ function notifier_init () {
 function notifier_page_handler ($page) {
 	elgg_load_library('elgg:notifier');
 	
-	$params = notifier_get_page_content_list();
+	switch ($page[0]) {
+		case 'view':
+			notifier_route_to_entity($page[1]);
+			break;
+		case 'all':
+		default:
+			$params = notifier_get_page_content_list();
+	}
 	
 	$body = elgg_view_layout('content', $params);
 	
@@ -123,16 +139,32 @@ function notifier_notify_handler(ElggEntity $from, ElggUser $to, $subject, $mess
 }
 
 /**
- * @todo
+ * Get the count of all unread notifications
  */
 function notifier_count_unread () {
-	return elgg_get_entities(array(
+	return notifier_get_unread(array('count' => true));
+}
+
+function notifier_get_unread ($options = array()) {
+	$defaults = array(
 		'type' => 'object',
 		'subtype' => 'notification',
 		'limit' => false,
 		'count' => true,
 		'owner_guid' => elgg_get_logged_in_user_guid(),
-	));
+		'metadata_name_value_pairs' => array(
+			'name' => 'status',
+			'value' => 'unread'
+		),
+		'order_by_metadata' => array(
+			'name' => 'status',
+			'direction' => DESC
+		),
+	);
+	
+	$options = array_merge($defaults, $options);
+		
+	return elgg_get_entities_from_metadata($options);
 }
 
 /**
@@ -148,9 +180,6 @@ function notifier_message_body($hook, $type, $message, $params) {
 	$entity = $params['entity'];
 	$to_entity = $params['to_entity'];
 	$method = $params['method'];
-	
-	global $CONFIG;
-	$subject = $CONFIG->register_objects[$entity->getType()][$entity->getSubtype()];
 	
 	//$message = elgg_echo('notifier:message', array($subject));
 
@@ -172,12 +201,13 @@ function notifier_message_body($hook, $type, $message, $params) {
 	$ia = elgg_set_ignore_access(true);
 	$notification = new ElggObject();
 	$notification->subtype = 'notification';
-	$notification->title = $subject;
-	$notification->description = $message;
+	$notification->title = elgg_echo('notifier:notification');
+	//$notification->description = $message;
 	$notification->owner_guid = $to_entity->getGUID();
 	$notification->container_guid = $to_entity->getGUID();
 	$notification->access_id = ACCESS_PRIVATE;
 	$notification->target = $entity->getGUID();
+    $notification->status = 'unread';
 	$guid = $notification->save();
 	elgg_set_ignore_access($ia);
 	

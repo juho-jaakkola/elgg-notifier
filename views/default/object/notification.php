@@ -15,13 +15,7 @@ if (!$entity) {
 	return false;
 }
 
-$title = $notification->title;
-if (!$title) {
-	$title = $notification->name;
-}
-if (!$title) {
-	$title = get_class($notification);
-}
+$title = $CONFIG->register_objects[$entity->getType()][$entity->getSubtype()];
 
 if (elgg_instanceof($notification, 'object')) {
 	$metadata = elgg_view('navigation/menu/metadata', $vars);
@@ -37,8 +31,9 @@ if ($owner) {
 	));
 }
 
+// Route through notifier page handler to update notification status
 $entity_link = elgg_view('output/url', array(
-	'href' => $entity->getURL(),
+	'href' => "notifier/view/{$notification->getGUID()}",
 	'text' => $entity->title,
 	'is_trusted' => true,
 ));
@@ -50,6 +45,10 @@ $date = elgg_view_friendly_time($notification->time_created);
 $by_user = elgg_echo('byline', array($owner_link));
 
 $subtitle = "$title $entity_link $by_user $date";
+
+if ($notification->status === 'unread') {
+	$vars['class'] = 'elgg-notifier-unread';
+}
 
 $params = array(
 	'entity' => $notification,

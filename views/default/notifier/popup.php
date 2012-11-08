@@ -10,10 +10,14 @@ $vars = array(
 
 $title = elgg_echo('notifier:notifications');
 
-$notifications = elgg_list_entities(array(
+$notifications = elgg_list_entities_from_metadata(array(
 	'type' => 'object',
 	'subtype' => 'notification',
 	'owner_guid' => elgg_get_logged_in_user_guid(),
+	'order_by_metadata' => array(
+		'name' => 'status',
+		'direction' => DESC
+	),
 ));
 
 if ($notifications) {
@@ -31,7 +35,6 @@ if ($notifications) {
 $body = <<<HTML
 	$notifications
 	$link
-	<span id="notifier-messages-none" class="hidden">$none_message</span>
 HTML;
 
 $content = elgg_view_module('popup', $title, $body, $vars);
