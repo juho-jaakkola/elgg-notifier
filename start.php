@@ -15,17 +15,18 @@ function notifier_init () {
 	elgg_load_js('elgg.notifier');
 	
 	/*
+	$ia = elgg_set_ignore_access(true);
 	$notifications = elgg_get_entities(array(
 		'type' => 'object',
 		'subtype' => 'notification',
 		'limit' => false,
-		'owner_guid' => elgg_get_logged_in_user_guid()
+		//'owner_guid' => elgg_get_logged_in_user_guid()
 	));
 	
-	$ia = elgg_set_ignore_access(true);
 	foreach ($notifications as $notification) {
-	    $notification->status = 'unread';
-	    $notification->save();
+		//$notification->status = 'unread';
+		//$notification->save();
+		$notification->delete();
 	}
 	elgg_set_ignore_access($ia);
 	*/
@@ -182,49 +183,25 @@ function notifier_message_body($hook, $type, $message, $params) {
 	$method = $params['method'];
 	
 	//$message = elgg_echo('notifier:message', array($subject));
-
-	/*
-	echo "<pre>";
-	var_dump($subject);
-	echo "<pre>";
-	var_dump($hook);
-	echo "<hr />";
-	var_dump($type);
-	echo "<hr />";
-	var_dump($message);
-	echo "<hr />";
-	var_dump($params);
-	echo "</pre>";
-	exit;
-	*/
+	//$title = $CONFIG->register_objects[$entity->getType()][$entity->getSubtype()];
+	
+	$type = $entity->getType();
+	$subtype = $entity->getSubtype();
+	$title = "river:create:$type:$subtype";
 	
 	$ia = elgg_set_ignore_access(true);
 	$notification = new ElggObject();
 	$notification->subtype = 'notification';
-	$notification->title = elgg_echo('notifier:notification');
-	//$notification->description = $message;
+	$notification->title = $title;
+	$notification->description = $message;
 	$notification->owner_guid = $to_entity->getGUID();
 	$notification->container_guid = $to_entity->getGUID();
 	$notification->access_id = ACCESS_PRIVATE;
+	$notification->target_type = 'entity';
 	$notification->target = $entity->getGUID();
     $notification->status = 'unread';
 	$guid = $notification->save();
 	elgg_set_ignore_access($ia);
-	
-	/*
-	echo "<pre>";
-	var_dump($subject);
-	echo "<pre>";
-	var_dump($hook);
-	echo "<hr />";
-	var_dump($type);
-	echo "<hr />";
-	var_dump($message);
-	echo "<hr />";
-	var_dump($params);
-	echo "</pre>";
-	exit;
-	*/
 	
 	return $message;
 }
@@ -234,41 +211,27 @@ function notifier_message_body($hook, $type, $message, $params) {
  */ 
 function notifier_comment_notifications($event, $type, $annotation) {
 	if ($annotation->name == "generic_comment" || $annotation->name == "group_topic_post") {
-		
-		$subject = elgg_echo('generic_comments:text');
-		$message = elgg_echo('river:comment:object:default');
+		$title = 'riveraction:annotation:generic_comment';
+		$message = 'river:comment:object:default';
 		
 		$entity = get_entity($annotation->entity_guid);
-		$to_entity = $entity->getOwnerGUID(); 
-		
-
-		
+		$to_entity_guid = $entity->getOwnerGUID();
 			
 		$ia = elgg_set_ignore_access(true);
 		$notification = new ElggObject();
 		$notification->subtype = 'notification';
-		$notification->title = $subject;
+		$notification->title = $title;
 		$notification->description = $message;
-		$notification->owner_guid = $to_entity;
-		$notification->container_guid = $to_entity;
+		$notification->owner_guid = $to_entity_guid;
+		$notification->container_guid = $to_entity_guid;
 		$notification->access_id = ACCESS_PRIVATE;
-		$notification->target = $entity->getGUID();
+		$notification->target_type = 'annotation';
+		$notification->target = $annotation->id;
+		$notification->status = 'unread';
 		$guid = $notification->save();
 		elgg_set_ignore_access($ia);
 	}
 	
-	/*
-	echo "<pre>";
-	var_dump($event);
-	echo "<hr />";
-	var_dump($type);
-	echo "<hr />";
-	var_dump($annotation);
-	echo "<hr />";
-	echo "</pre>";
-	exit;
-	*/
-
 	return TRUE;
 }
 

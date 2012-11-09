@@ -37,16 +37,30 @@ function notifier_route_to_entity ($guid) {
 		forward();
 	}
 	
-	$target = get_entity($notification->target);
-	
-	if (!elgg_instanceof($target)) {
-		// The target was not found. It has propably been deleted
+	if ($notification->target_type === 'entity') {
+		$target = get_entity($notification->target);
 		
-		// The notification is not needed anymore
-		$notification->delete();
+		if (!elgg_instanceof($target)) {
+			// The target was not found. It has propably been deleted
+			
+			// The notification is not needed anymore
+			$notification->delete();
+			
+			register_error(elgg_echo('notifier:error:target_not_found'));
+			forward();
+		}
+	} else {
+		$annotation = elgg_get_annotation_from_id($notification->target);
 		
-		register_error(elgg_echo('notifier:error:target_not_found'));
-		forward();
+		if (!$annotation) {
+			// The notification is not needed anymore
+			$notification->delete();
+			
+			register_error(elgg_echo('notifier:error:target_not_found'));
+			forward();
+		}
+
+		$target = get_entity($annotation->entity_guid);
 	}
 
 	// Mark that the user has read the notification
