@@ -45,7 +45,7 @@ if (elgg_instanceof($target, 'object')) {
 	$type = $target->getType();
 	$subtype = $target->getSubtype();
 	$subtitle = elgg_echo("river:create:$type:$subtype", array($subject_link, $target_link));
-} else {
+} elseif ($notification->target_type === 'annotation') {
 	$subject = get_entity($target->owner_guid);
 	$entity = get_entity($target->entity_guid);
 	
@@ -62,6 +62,21 @@ if (elgg_instanceof($target, 'object')) {
 	$type = $entity->getType();
 	$subtype = $entity->getSubtype();
 	$subtitle = elgg_echo("river:comment:$type:$subtype", array($subject_link, $entity_link));
+} else {
+	$subject = get_entity($target->owner_guid);
+
+	$subject_link = elgg_view('output/url', array(
+		'href' => $subject->getURL(),
+		'text' => $subject->name,
+	));
+
+	$entity = get_entity($target->entity_guid);
+	$entity_link = elgg_view('output/url', array(
+		'href' => "notifier/view/{$notification->getGUID()}",
+		'text' => $entity->title,
+	));
+
+	$subtitle = elgg_echo($notification->title, array($subject_link, $entity_link));
 }
 
 if (elgg_instanceof($notification, 'object')) {
