@@ -262,8 +262,6 @@ function notifier_handle_mentions ($object, $type) {
 	$notified_guids = array();
 
 	foreach ($fields as $field) {
-
-		$content = $object->$field;
 		// it's ok in in this case if 0 matches == FALSE
 		if (preg_match_all($CONFIG->mentions_match_regexp, $content, $matches)) {
 			// match against the 2nd index since the first is everything
@@ -296,42 +294,14 @@ function notifier_handle_mentions ($object, $type) {
 						continue;
 					}
 
-					// figure out the link
-					switch($type) {
-						case 'annotation':
-							//@todo permalinks for comments?
-							if ($parent = get_entity($object->entity_guid)) {
-								$link = $parent->getURL();
-							} else {
-								$link = 'Unavailable';
-							}
-							break;
-						default:
-							$link = $object->getURL();
-							break;
-					}
-
-					$owner = get_entity($object->owner_guid);
+					// @todo Is there need to know what the type of the target is?
 					$type_key = "mentions:notification_types:$type";
 					if ($subtype = $object->getSubtype()) {
 						$type_key .= ":$subtype";
 					}
-
-					$owner_link = elgg_view('output/url', array(
-						'href' => $owner->getURL(),
-						'text' => $owner->name,
-					));
-
 					$type_str = elgg_echo($type_key);
 
-					$type_link = elgg_view('output/url', array(
-						'href' => $link,
-						'text' => $type_str,
-					));
-
 					$subject = 'mentions:notification:subject';
-					//$subject = elgg_echo('mentions:notification:subject', array($owner_link, $type_link));
-					$body = elgg_echo('mentions:notification:body', array($owner_link, $type_str, $content, $link));
 
 					$ia = elgg_set_ignore_access(true);
 					$notification = new ElggObject();
