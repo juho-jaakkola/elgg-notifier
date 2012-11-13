@@ -199,14 +199,21 @@ function notifier_message_body($hook, $type, $message, $params) {
  * Handle comment notifications
  */ 
 function notifier_comment_notifications($event, $type, $annotation) {
-	if ($annotation->name == "generic_comment" || $annotation->name == "group_topic_post") {
+	if ($annotation->name == "generic_comment" ||
+		$annotation->name == "group_topic_post" ||
+		$annotation->name == "likes"
+		) {
 		$entity = get_entity($annotation->entity_guid);
 		$owner_guid = $entity->getOwnerGUID();
 
-		$type = $entity->getType();
-		$subtype = $entity->getSubtype();
+		if ($annotation->name == 'likes') {
+			$title = 'likes:notifications:subject';
+		} else {
+			$type = $entity->getType();
+			$subtype = $entity->getSubtype();
 
-		$title = "river:comment:$type:$subtype";
+			$title = "river:comment:$type:$subtype";
+		}
 
 		$notification = new ElggNotification();
 		$notification->title = $title;
