@@ -7,20 +7,15 @@
 
 $notification = $vars['entity'];
 
-if ($notification->target_type === 'entity') {
-	$target = get_entity($notification->target);
-	$subject = $target->getOwnerEntity();
-} else {
-	$annotation = elgg_get_annotation_from_id($notification->target);
-	$target = get_entity($annotation->entity_guid);
-	$subject = get_entity($annotation->owner_guid);
-}
+$target = $notification->getTargetEntity();
+$subject = $notification->getSubjectEntity();
 
 if (!$target) {
 	// The entity to notify about doesn't exist anymore so delete the notification
 	$notification->delete();
 	return false;
 }
+
 // Route through notifier page handler to update notification status
 $target_link = elgg_view('output/url', array(
 	'href' => "notifier/view/{$notification->getGUID()}",
@@ -37,13 +32,7 @@ $subject_link = elgg_view('output/url', array(
 $type = $target->getType();
 $subtype = $target->getSubtype();
 
-if ($notification->target_type === 'entity') {
-	$subtitle = elgg_echo("river:create:$type:$subtype", array($subject_link, $target_link));
-} elseif ($notification->target_type === 'annotation') {
-	$subtitle = elgg_echo("river:comment:$type:$subtype", array($subject_link, $target_link));
-} else {
-	$subtitle = elgg_echo($notification->title, array($subject_link, $target_link));
-}
+$subtitle = elgg_echo($notification->title, array($subject_link, $target_link));
 
 $time = elgg_view_friendly_time($notification->time_created);
 
@@ -62,7 +51,6 @@ $params = array(
 	'title' => false,
 	'metadata' => $metadata,
 	'subtitle' => "$subtitle $time",
-	//'content' => $notification->description,
 );
 $params = $params + $vars;
 $body = elgg_view('object/elements/summary', $params);

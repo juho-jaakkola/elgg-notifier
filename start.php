@@ -100,7 +100,6 @@ function notifier_page_handler ($page) {
  * @return bool
  */
 function notifier_notify_handler(ElggEntity $from, ElggUser $to, $subject, $message, array $params = NULL) {
-
 	return false;
 
 	if (!$from) {
@@ -180,56 +179,42 @@ function notifier_get_unread ($options = array()) {
 function notifier_message_body($hook, $type, $message, $params) {
 	$entity = $params['entity'];
 	$to_entity = $params['to_entity'];
-	$method = $params['method'];
-	
-	//$message = elgg_echo('notifier:message', array($subject));
-	//$title = $CONFIG->register_objects[$entity->getType()][$entity->getSubtype()];
 	
 	$type = $entity->getType();
 	$subtype = $entity->getSubtype();
 	$title = "river:create:$type:$subtype";
 	
-	$ia = elgg_set_ignore_access(true);
-	$notification = new ElggObject();
-	$notification->subtype = 'notification';
+	$notification = new ElggNotification();
 	$notification->title = $title;
-	$notification->description = $message;
 	$notification->owner_guid = $to_entity->getGUID();
 	$notification->container_guid = $to_entity->getGUID();
-	$notification->access_id = ACCESS_PRIVATE;
-	$notification->target_type = 'entity';
-	$notification->target = $entity->getGUID();
-    $notification->status = 'unread';
-	$guid = $notification->save();
-	elgg_set_ignore_access($ia);
-	
+	$notification->setSubjectGUID($entity->getOwnerGUID());
+	$notification->setTargetGUID($entity->getGUID());
+	$notification->save();
+
 	return $message;
 }
 
 /**
- * Manage comment notifications
+ * Handle comment notifications
  */ 
 function notifier_comment_notifications($event, $type, $annotation) {
 	if ($annotation->name == "generic_comment" || $annotation->name == "group_topic_post") {
-		$title = 'riveraction:annotation:generic_comment';
-		$message = 'river:comment:object:default';
-
 		$entity = get_entity($annotation->entity_guid);
-		$to_entity_guid = $entity->getOwnerGUID();
+		$owner_guid = $entity->getOwnerGUID();
 
-		$ia = elgg_set_ignore_access(true);
-		$notification = new ElggObject();
-		$notification->subtype = 'notification';
+		$type = $entity->getType();
+		$subtype = $entity->getSubtype();
+
+		$title = "river:comment:$type:$subtype";
+
+		$notification = new ElggNotification();
 		$notification->title = $title;
-		$notification->description = $message;
-		$notification->owner_guid = $to_entity_guid;
-		$notification->container_guid = $to_entity_guid;
-		$notification->access_id = ACCESS_PRIVATE;
-		$notification->target_type = 'annotation';
-		$notification->target = $annotation->id;
-		$notification->status = 'unread';
-		$guid = $notification->save();
-		elgg_set_ignore_access($ia);
+		$notification->owner_guid = $owner_guid;
+		$notification->container_guid = $owner_guid;
+		$notification->setSubjectGUID($annotation->owner_guid);
+		$notification->setTargetGUID($entity->getGUID());
+		$notification->save();
 
 		notifier_handle_mentions($annotation, 'annotation');
 	}
@@ -262,6 +247,7 @@ function notifier_handle_mentions ($object, $type) {
 	$notified_guids = array();
 
 	foreach ($fields as $field) {
+		$content = $object->$field;
 		// it's ok in in this case if 0 matches == FALSE
 		if (preg_match_all($CONFIG->mentions_match_regexp, $content, $matches)) {
 			// match against the 2nd index since the first is everything
@@ -274,11 +260,13 @@ function notifier_handle_mentions ($object, $type) {
 				if ($type == 'annotation') {
 					if ($parent = get_entity($object->entity_guid)) {
 						$access = has_access_to_entity($parent, $user);
+						$target_guid = $parent->getGUID();
 					} else {
 						continue;
 					}
 				} else {
 					$access = has_access_to_entity($object, $user);
+					$target_guid = $object->getGUID();
 				}
 
 				// Override access
@@ -301,21 +289,15 @@ function notifier_handle_mentions ($object, $type) {
 					}
 					$type_str = elgg_echo($type_key);
 
-					$subject = 'mentions:notification:subject';
+					$title = 'mentions:notification:subject';
 
-					$ia = elgg_set_ignore_access(true);
-					$notification = new ElggObject();
-					$notification->subtype = 'notification';
-					$notification->title = $subject;
-					$notification->description = $body;
+					$notification = new ElggNotification();
+					$notification->title = $title;
 					$notification->owner_guid = $user->getGUID();
 					$notification->container_guid = $user->getGUID();
-					$notification->access_id = ACCESS_PRIVATE;
-					$notification->target_type = 'other';
-					$notification->target = $object->id;
-					$notification->status = 'unread';
-					$guid = $notification->save();
-					elgg_set_ignore_access($ia);
+					$notification->setSubjectGUID($object->owner_guid);
+					$notification->setTargetGUID($target_guid);
+					$notification->save();
 				}
 			}
 		}
