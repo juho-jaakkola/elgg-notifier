@@ -18,6 +18,7 @@ $notifications = elgg_list_entities_from_metadata(array(
 		'name' => 'status',
 		'direction' => DESC
 	),
+	'pagination' => false
 ));
 
 if ($notifications) {
