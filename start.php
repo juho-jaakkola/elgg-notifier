@@ -28,7 +28,7 @@ function notifier_init () {
 
 	// Hook handler for cron that removes old messages
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
-	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_message_body', 1);
+	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_object_notifications');
 
 	elgg_register_event_handler('create', 'annotation', 'notifier_comment_notifications');
 	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
@@ -83,53 +83,13 @@ function notifier_page_handler ($page) {
 }
 
 /**
- * Notification handler
- *
- * @param ElggEntity $from
- * @param ElggUser   $to
- * @param string     $subject
- * @param string     $message
- * @param array      $params
- * @return bool
+ * Dummy handler to enable notifier as a new notification method.
+ * 
+ * The actual notifications are created by intercepting the notification
+ * process with plugin hooks. This function is required because all
+ * notification methods must have a callable handler function.
  */
-function notifier_notify_handler(ElggEntity $from, ElggUser $to, $subject, $message, array $params = NULL) {
-	return false;
-
-	if (!$from) {
-		throw new NotificationException(elgg_echo('NotificationException:MissingParameter', array('from')));
-	}
-
-	if (!$to) {
-		throw new NotificationException(elgg_echo('NotificationException:MissingParameter', array('to')));
-	}
-
-	echo "<pre>";
-	var_dump($from);
-	echo "<hr />";
-	var_dump($to);
-	echo "<hr />";
-	var_dump($subject);
-	echo "<hr />";
-	var_dump($message);
-	echo "<hr />";
-	var_dump($params);
-	echo "</pre>";
-	exit;
-
-	$ia = elgg_set_ignore_access(true);
-	$notification = new ElggNotification();
-	$notification->title = $subject;
-	$notification->description = $message;
-	$notification->owner_guid = $to->getGUID();
-	$notification->container_guid = $to->getGUID();
-	$notification->access_id = ACCESS_PRIVATE;
-	//$notification->save();
-	elgg_set_ignore_access($ia);
-	
-	elgg_echo($notification);
-
-	return true;
-}
+function notifier_notify_handler() {}
 
 /**
  * Get the count of all unread notifications
@@ -164,29 +124,41 @@ function notifier_get_unread ($options = array()) {
 }
 
 /**
- * Set the notification message body
+ * Notify user about new content
+ * 
+ * This intercepts the notification process already before the call to
+ * notify_user() is done. This is because we need more detailed info
+ * than the notify_user() function can provide. After creating a new
+ * notifier we can return false because there is no need to continue
+ * to the notify_user() call.
  * 
  * @param string $hook    Hook name
  * @param string $type    Hook type
- * @param string $message The current message body
- * @param array  $params  Parameters about the blog posted
- * @return string
+ * @param string $message Message body of the notification
+ * @param array  $params  Parameters about the created entity
+ * @return false|string
  */
-function notifier_message_body($hook, $type, $message, $params) {
-	$entity = $params['entity'];
-	$to_entity = $params['to_entity'];
+function notifier_object_notifications($hook, $type, $message, $params) {
+	// Create notification only if user has chosen it as notification method
+	if ($params['method'] === 'notifier') {
+		$entity = $params['entity'];
+		$to_entity = $params['to_entity'];
 
-	$type = $entity->getType();
-	$subtype = $entity->getSubtype();
-	$title = "river:create:$type:$subtype";
+		// Use river string as the content of the notification
+		$type = $entity->getType();
+		$subtype = $entity->getSubtype();
+		$title = "river:create:$type:$subtype";
 
-	$notification = new ElggNotification();
-	$notification->title = $title;
-	$notification->owner_guid = $to_entity->getGUID();
-	$notification->container_guid = $to_entity->getGUID();
-	$notification->setSubjectGUID($entity->getOwnerGUID());
-	$notification->setTargetGUID($entity->getGUID());
-	$notification->save();
+		notifier_add_notification(array(
+			'title' => $title,
+			'user_guid' => $to_entity->getGUID(),
+			'target_guid' => $entity->getGUID(),
+			'subject_guid' => $entity->getOwnerGUID()
+		));
+
+		// Notification has been created. No need to continue.
+		return false;
+	}
 
 	return $message;
 }
