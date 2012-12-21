@@ -7,13 +7,15 @@
 
 function notifier_init () {
 	elgg_register_library('elgg:notifier', elgg_get_plugins_path() . 'notifier/lib/notifier.php');
-	
+
+	notifier_set_view_listener();
+
 	// Register the notifier's JavaScript
 	$notifier_js = elgg_get_simplecache_url('js', 'notifier/notifier');
 	elgg_register_simplecache_view('js/notifier/notifier');
 	elgg_register_js('elgg.notifier', $notifier_js);
 	elgg_load_js('elgg.notifier');
-	
+
 	/*
 	$ia = elgg_set_ignore_access(true);
 	$notifications = elgg_get_entities(array(
@@ -76,14 +78,7 @@ function notifier_init () {
 function notifier_page_handler ($page) {
 	elgg_load_library('elgg:notifier');
 	
-	switch ($page[0]) {
-		case 'view':
-			notifier_route_to_entity($page[1]);
-			break;
-		case 'all':
-		default:
-			$params = notifier_get_page_content_list();
-	}
+	$params = notifier_get_page_content_list();
 	
 	$body = elgg_view_layout('content', $params);
 	
@@ -403,6 +398,18 @@ function notifier_cron ($hook, $entity_type, $returnvalue, $params) {
 	echo "<p>Removed $count notifications.</p>";
 
 	elgg_set_ignore_access($ia);
+}
+
+/**
+ * Add view listener to views that may be the targets of notifications
+ */
+function notifier_set_view_listener () {
+	// TODO make these configurable
+	$types = array('blog', 'bookmarks', 'file', 'page_top', 'page');
+
+	foreach ($types as $type) {
+	    elgg_extend_view("object/$type", 'notifier/view_listener');
+	}
 }
 
 elgg_register_event_handler('init', 'system', 'notifier_init');

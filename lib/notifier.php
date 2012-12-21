@@ -35,33 +35,3 @@ function notifier_get_page_content_list () {
 
 	return $params;
 }
-
-/**
- * Mark notification as read and forward to the content
- * 
- * @param int $guid
- */
-function notifier_route_to_entity ($guid) {
-	$notification = get_entity($guid);
-
-	if (!elgg_instanceof($notification, 'object', 'notification')) {
-		register_error(elgg_echo('notifier:error:not_found'));
-		forward();
-	}
-
-	$target = $notification->getTargetEntity();
-
-	if (!elgg_instanceof($target)) {
-		// The target was not found. It has propably been deleted
-		// The notification is not needed anymore
-		$notification->delete();
-
-		register_error(elgg_echo('notifier:error:target_not_found'));
-		forward();
-	}
-
-	// Mark that the user has read the notification
-	$notification->markRead();
-
-	forward($target->getURL());
-}

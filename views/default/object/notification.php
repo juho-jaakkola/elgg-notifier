@@ -25,7 +25,7 @@ if (!$target) {
 
 // Route through notifier page handler to update notification status
 $target_link = elgg_view('output/url', array(
-	'href' => "notifier/view/{$notification->getGUID()}",
+	'href' => $target->getURL(),
 	'text' => $target->title,
 	'is_trusted' => true,
 ));
