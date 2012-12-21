@@ -10,7 +10,7 @@ $notification = $vars['entity'];
 $target = $notification->getTargetEntity();
 $subject = $notification->getSubjectEntity();
 
-if (!$target) {
+if (!$target || !$subject) {
 	// Add admin notice to help trace the reason of invalid notifications
 	$title = $notification->title;
 	$subject = $subject->username;
