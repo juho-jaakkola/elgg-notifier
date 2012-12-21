@@ -278,9 +278,9 @@ function notifier_handle_mentions ($object, $type) {
 
 					notifier_add_notification(array(
 						'title' => $title,
-						'user_guid' => $owner_guid,
-						'target_guid' => $entity->getGUID(),
-						'subject_guid' => $subject_guid
+						'user_guid' => $user->guid,
+						'target_guid' => $target_guid,
+						'subject_guid' => $object->owner_guid
 					));
 				}
 			}
