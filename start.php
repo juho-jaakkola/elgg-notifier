@@ -206,9 +206,10 @@ function notifier_comment_notifications($event, $type, $annotation) {
 		$entity = get_entity($annotation->entity_guid);
 		$owner_guid = $entity->getOwnerGUID();
 
-		$user_guid = elgg_get_logged_in_user_guid();
+		$subject_guid = $annotation->owner_guid;
 
-		if ($user_guid != $owner_guid) {
+		// Do not notify about own annotations
+		if ($subject_guid != $owner_guid) {
 			if ($annotation->name == 'likes') {
 				$title = 'likes:notifications:subject';
 			} else {
@@ -218,13 +219,12 @@ function notifier_comment_notifications($event, $type, $annotation) {
 				$title = "river:comment:$type:$subtype";
 			}
 
-			$notification = new ElggNotification();
-			$notification->title = $title;
-			$notification->owner_guid = $owner_guid;
-			$notification->container_guid = $owner_guid;
-			$notification->setSubjectGUID($annotation->owner_guid);
-			$notification->setTargetGUID($entity->getGUID());
-			$notification->save();
+			notifier_add_notification(array(
+				'title' => $title,
+				'user_guid' => $owner_guid,
+				'target_guid' => $entity->getGUID(),
+				'subject_guid' => $subject_guid
+			));
 		}
 
 		notifier_handle_mentions($annotation, 'annotation');
@@ -302,17 +302,71 @@ function notifier_handle_mentions ($object, $type) {
 
 					$title = 'mentions:notification:subject';
 
-					$notification = new ElggNotification();
-					$notification->title = $title;
-					$notification->owner_guid = $user->getGUID();
-					$notification->container_guid = $user->getGUID();
-					$notification->setSubjectGUID($object->owner_guid);
-					$notification->setTargetGUID($target_guid);
-					$notification->save();
+					notifier_add_notification(array(
+						'title' => $title,
+						'user_guid' => $owner_guid,
+						'target_guid' => $entity->getGUID(),
+						'subject_guid' => $subject_guid
+					));
 				}
 			}
 		}
 	}
+}
+
+/**
+ * Add a new notification if similar not already exists
+ * 
+ * @uses int $options['user_guid']    GUID of the user being notified
+ * @uses int $options['target_guid']  GUID of the entity being acted on
+ * @uses int $options['subject_guid'] GUID of the user acting on target
+ * @uses string $options['title']     Translation string of the action
+ */
+function notifier_add_notification ($options) {
+	$user_guid = $options['user_guid'];
+	$target_guid = $options['target_guid'];
+	$subject_guid = $options['subject_guid'];
+	$title = $options['title'];
+
+	$db_prefix = elgg_get_config('dbprefix');
+	$ia = elgg_set_ignore_access(true);
+
+	// Check if the same notification already exists
+	$notifiers = elgg_get_entities_from_metadata(array(
+		'type' => 'object',
+		'subtype' => 'notification',
+		'owner_guid' => $user_guid,
+		'joins' => array(
+			"JOIN {$db_prefix}objects_entity oe ON e.guid = oe.guid"
+		),
+		'wheres' => array("title = '$title'"),
+		'metadata_name_value_pairs' => array(
+			array(
+				'name' => 'target_guid',
+				'value' => $target_guid,
+			),
+			array(
+				'name' => 'subject_guid',
+				'value' => $subject_guid
+			),
+			array(
+				'name' => 'status',
+				'value' => 'unread',
+			)
+		),
+	));
+
+	if (empty($notifiers)) {
+		$notification = new ElggNotification();
+		$notification->title = $title;
+		$notification->owner_guid = $user_guid;
+		$notification->container_guid = $user_guid;
+		$notification->setSubjectGUID($subject_guid);
+		$notification->setTargetGUID($target_guid);
+		$notification->save();
+	}
+
+	elgg_set_ignore_access($ia);
 }
 
 elgg_register_event_handler('init', 'system', 'notifier_init');
