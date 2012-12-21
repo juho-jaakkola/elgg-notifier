@@ -206,22 +206,26 @@ function notifier_comment_notifications($event, $type, $annotation) {
 		$entity = get_entity($annotation->entity_guid);
 		$owner_guid = $entity->getOwnerGUID();
 
-		if ($annotation->name == 'likes') {
-			$title = 'likes:notifications:subject';
-		} else {
-			$type = $entity->getType();
-			$subtype = $entity->getSubtype();
+		$user_guid = elgg_get_logged_in_user_guid();
 
-			$title = "river:comment:$type:$subtype";
+		if ($user_guid != $owner_guid) {
+			if ($annotation->name == 'likes') {
+				$title = 'likes:notifications:subject';
+			} else {
+				$type = $entity->getType();
+				$subtype = $entity->getSubtype();
+
+				$title = "river:comment:$type:$subtype";
+			}
+
+			$notification = new ElggNotification();
+			$notification->title = $title;
+			$notification->owner_guid = $owner_guid;
+			$notification->container_guid = $owner_guid;
+			$notification->setSubjectGUID($annotation->owner_guid);
+			$notification->setTargetGUID($entity->getGUID());
+			$notification->save();
 		}
-
-		$notification = new ElggNotification();
-		$notification->title = $title;
-		$notification->owner_guid = $owner_guid;
-		$notification->container_guid = $owner_guid;
-		$notification->setSubjectGUID($annotation->owner_guid);
-		$notification->setTargetGUID($entity->getGUID());
-		$notification->save();
 
 		notifier_handle_mentions($annotation, 'annotation');
 	}
