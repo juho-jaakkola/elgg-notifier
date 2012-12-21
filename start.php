@@ -10,6 +10,9 @@ function notifier_init () {
 
 	notifier_set_view_listener();
 
+	// Add hidden popup module to topbar
+	elgg_extend_view('page/elements/topbar', 'notifier/popup');
+
 	// Register the notifier's JavaScript
 	$notifier_js = elgg_get_simplecache_url('js', 'notifier/notifier');
 	elgg_register_simplecache_view('js/notifier/notifier');
@@ -23,16 +26,21 @@ function notifier_init () {
 
 	register_notification_handler('notifier', 'notifier_notify_handler');
 
-	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_message_body', 1);
-	elgg_register_event_handler('create', 'annotation', 'notifier_comment_notifications');
-
-	// Register cron hook
+	// Hook handler for cron that removes old messages
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
+	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_message_body', 1);
 
+	elgg_register_event_handler('create', 'annotation', 'notifier_comment_notifications');
+	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
+}
+
+/**
+ * Add notifier icon to topbar menu
+ * 
+ * The menu item opens a popup module defined in view notifier/popup
+ */
+function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 	if (elgg_is_logged_in()) {
-		// Add hidden popup module to topbar
-		elgg_extend_view('page/elements/topbar', 'notifier/popup');
-
 		// get unread notifications
 		$num_notifications = (int)notifier_count_unread();
 
@@ -43,17 +51,20 @@ function notifier_init () {
 			$text .= "<span class=\"messages-new\">$num_notifications</span>";
 		}
 
-		// This link opens the popup module
-		elgg_register_menu_item('topbar', array(
+		$item = ElggMenuItem::factory(array(
 			'name' => 'notifier',
 			'href' => '#notifier-popup',
 			'text' => $text,
 			'priority' => 600,
 			'title' => $tooltip,
 			'rel' => 'popup',
-			'id' => 'notifier-popup-link',
+			'id' => 'notifier-popup-link'
 		));
+
+		$return[] = $item;
 	}
+
+	return $return;
 }
 
 /**
