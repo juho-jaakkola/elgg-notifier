@@ -11,6 +11,13 @@ $target = $notification->getTargetEntity();
 $subject = $notification->getSubjectEntity();
 
 if (!$target) {
+	// Add admin notice to help trace the reason of invalid notifications
+	$title = $notification->title;
+	$subject = $subject->username;
+	$user = $notification->getOwnerEntity()->username;
+	$notice = "Failed to view notification $title from user $subject to user $user";
+	elgg_add_admin_notice('notifier_no_targer', $notice);
+
 	// The entity to notify about doesn't exist anymore so delete the notification
 	$notification->delete();
 	return false;
