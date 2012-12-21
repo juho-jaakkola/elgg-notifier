@@ -42,6 +42,9 @@ function notifier_init () {
 	
 	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_message_body', 1);
 	elgg_register_event_handler('create', 'annotation', 'notifier_comment_notifications');
+
+	// Register cron hook
+	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
 	
 	if (elgg_is_logged_in()) {
 		// Add hidden popup module to topbar
@@ -365,6 +368,39 @@ function notifier_add_notification ($options) {
 		$notification->setTargetGUID($target_guid);
 		$notification->save();
 	}
+
+	elgg_set_ignore_access($ia);
+}
+
+/**
+ * Remove over week old notifications that have been read
+ */
+function notifier_cron ($hook, $entity_type, $returnvalue, $params) {
+	// One day ago
+	$time = time() - 60 * 60 * 24;
+
+	$options = array(
+		'type' => 'object',
+		'subtype' => 'notification',
+		'wheres' => array("e.time_created < $time"),
+		'metadata_name_value_pairs' => array(
+			'name' => 'status',
+			'value' => 'read'
+		),
+		'limit' => false
+	);
+
+	$ia = elgg_set_ignore_access(true);
+	$notifications = elgg_get_entities_from_metadata($options);
+
+	$options['count'] = true;
+	$count = elgg_get_entities_from_metadata($options);
+
+	foreach ($notifications as $notification) {
+		$notification->delete();
+	}
+
+	echo "<p>Removed $count notifications.</p>";
 
 	elgg_set_ignore_access($ia);
 }
