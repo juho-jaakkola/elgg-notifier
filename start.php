@@ -376,8 +376,8 @@ function notifier_add_notification ($options) {
  * Remove over week old notifications that have been read
  */
 function notifier_cron ($hook, $entity_type, $returnvalue, $params) {
-	// One day ago
-	$time = time() - 60 * 60 * 24;
+	// One week ago
+	$time = time() - 60 * 60 * 24 * 7;
 
 	$options = array(
 		'type' => 'object',
