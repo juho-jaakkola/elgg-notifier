@@ -156,6 +156,8 @@ function notifier_object_notifications($hook, $type, $message, $params) {
 			'subject_guid' => $entity->getOwnerGUID()
 		));
 
+		notifier_handle_mentions($entity, 'object');
+
 		// Notification has been created. No need to continue.
 		return false;
 	}
