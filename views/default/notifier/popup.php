@@ -33,9 +33,15 @@ if ($notifications) {
 	$link = elgg_echo('notifier:none');
 }
 
+$settings_link = elgg_view('output/url', array(
+	'href' => 'notifications/personal',
+	'text' => elgg_echo('settings')
+));
+
 $body = <<<HTML
 	$notifications
 	$link
+	<span class="float-alt">$settings_link</span>
 HTML;
 
 $content = elgg_view_module('popup', $title, $body, $vars);

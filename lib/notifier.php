@@ -9,6 +9,13 @@ function notifier_get_page_content_list () {
 	$params['title'] = elgg_echo('notifier:all');
 	$params['filter'] = '';
 
+	elgg_register_menu_item('title', array(
+		'name' => 'notification-settings',
+		'href' => 'notifications/personal',
+		'text' => elgg_echo('settings'),
+		'class' => 'elgg-button elgg-button-action',
+	));
+
 	$notifications = elgg_list_entities_from_metadata(array(
 		'type' => 'object',
 		'subtype' => 'notification',
