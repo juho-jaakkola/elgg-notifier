@@ -13,6 +13,9 @@ $lang = array(
 	// Error messages
 	'notifier:error:not_found' => 'Ilmoitusta ei löytynyt',
 	'notifier:error:target_not_found' => 'Ilmoituksen kohdetta ei löytynyt, joten se on todennäköisesti poistettu.',
+
+	// River strings that are not available in Elgg core
+	'river:comment:object:groupforumtopic' => '%s vastasi keskusteluun %s',
 );
 
 add_translation('fi', $lang);

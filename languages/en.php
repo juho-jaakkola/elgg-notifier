@@ -13,6 +13,9 @@ $lang = array(
 	// Error messages
 	'notifier:error:not_found' => 'This notification was not found',
 	'notifier:error:target_not_found' => 'The content was not found, so it has propably been deleted.',
+
+	// River strings that are not available in Elgg core
+	'river:comment:object:groupforumtopic' => '%s replied on the discussion topic %s',
 );
 
 add_translation('en', $lang);

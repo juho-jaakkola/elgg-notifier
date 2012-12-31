@@ -383,7 +383,7 @@ function notifier_cron ($hook, $entity_type, $returnvalue, $params) {
  */
 function notifier_set_view_listener () {
 	// TODO make these configurable
-	$types = array('blog', 'bookmarks', 'file', 'page_top', 'page');
+	$types = array('blog', 'bookmarks', 'file', 'page_top', 'page', 'groupforumtopic');
 
 	foreach ($types as $type) {
 	    elgg_extend_view("object/$type", 'notifier/view_listener');
