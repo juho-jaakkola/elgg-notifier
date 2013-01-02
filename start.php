@@ -144,9 +144,15 @@ function notifier_object_notifications($hook, $type, $message, $params) {
 		$entity = $params['entity'];
 		$to_entity = $params['to_entity'];
 
-		// Use river string as the content of the notification
 		$type = $entity->getType();
 		$subtype = $entity->getSubtype();
+
+		// Do not notify about messages
+		if ($subtype == 'messages') {
+			return false;
+		}
+
+		// Use river string as the content of the notification
 		$title = "river:create:$type:$subtype";
 
 		notifier_add_notification(array(
