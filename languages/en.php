@@ -8,8 +8,8 @@ $lang = array(
 	'notifier:all' => 'All notifications',
 	'notifier:none' => 'No notifications',
 	'notifier:unreadcount' => 'Unread notifications (%s)',
-	'notification:method:notifier' => 'Notifications',
-	
+	'notification:method:notifier' => 'Notifier',
+
 	// Error messages
 	'notifier:error:not_found' => 'This notification was not found',
 	'notifier:error:target_not_found' => 'The content was not found, so it has propably been deleted.',
