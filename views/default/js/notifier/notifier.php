@@ -3,20 +3,6 @@
  * notifier JavaScript extension for elgg.js
  */
 ?>
-elgg.provide('elgg.notifier');
-
-elgg.notifier.init = function() {
-	
-};
-
-/**
- * Mark notification read
- *
- * @todo Finish this function
- */
-elgg.notifier.markNotificationRead = function() {
-	notification.animate({backgroundColor: '#ffffff'}, 1000).removeClass('elgg-notifier-unread');
-};
 
 /**
  * Repositions the notifier popup
@@ -37,5 +23,4 @@ elgg.ui.notifierPopupHandler = function(hook, type, params, options) {
 	return null;
 };
 
-elgg.register_hook_handler('init', 'system', elgg.notifier.init);
 elgg.register_hook_handler('getOptions', 'ui.popup', elgg.ui.notifierPopupHandler);
