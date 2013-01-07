@@ -1,0 +1,16 @@
+Version 1.8.1 (2013-01-07):
+
+ Enhancements:
+  * Marking contents as read supports more entity types
+  * Notification gets deleted when notification subject or target is deleted
+  * Added button for dismissing all unread notifications
+  * Added button for clearing the notification list
+
+ Bugfixes:
+  * Entities missing a title are displayed correctly in notification list
+  * Notifications related to The wire now get marked as read correctly
+
+
+Version 1.8.0 (2013-01-04):
+
+ First release
