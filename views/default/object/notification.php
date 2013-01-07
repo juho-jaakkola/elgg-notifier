@@ -23,10 +23,16 @@ if (!$target || !$subject) {
 	return false;
 }
 
+if (empty($target->title)) {
+	$text = elgg_get_excerpt($target->description, 20);
+} else {
+	$text = $target->title;
+}
+
 // Route through notifier page handler to update notification status
 $target_link = elgg_view('output/url', array(
 	'href' => $target->getURL(),
-	'text' => $target->title,
+	'text' => $text,
 	'is_trusted' => true,
 ));
 
