@@ -388,11 +388,18 @@ function notifier_cron ($hook, $entity_type, $returnvalue, $params) {
  * Add view listener to views that may be the targets of notifications
  */
 function notifier_set_view_listener () {
-	// TODO make these configurable
-	$types = array('blog', 'bookmarks', 'file', 'page_top', 'page', 'groupforumtopic');
+	$dbprefix = elgg_get_config('dbprefix');
+	$types = get_data("SELECT * FROM {$dbprefix}entity_subtypes");
+
+	// These subtypes do not have notifications so they can be skipped
+	$skip = array('plugin', 'widget', 'admin_notice', 'notification', 'messages', 'reported_content');
 
 	foreach ($types as $type) {
-	    elgg_extend_view("object/$type", 'notifier/view_listener');
+		if (in_array($type->subtype, $skip)) {
+			continue;
+		}
+
+	    elgg_extend_view("object/{$type->subtype}", 'notifier/view_listener');
 	}
 }
 
