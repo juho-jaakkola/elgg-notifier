@@ -29,9 +29,10 @@ function notifier_init () {
 	// Hook handler for cron that removes old messages
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
 	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_object_notifications');
+	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
 
 	elgg_register_event_handler('create', 'annotation', 'notifier_comment_notifications');
-	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
+	elgg_register_event_handler('delete', 'all', 'notifier_delete_event_listener');
 
 	$action_path = elgg_get_plugins_path() . 'notifier/actions/notifier/';
 	elgg_register_action('notifier/dismiss', $action_path . 'dismiss.php');
@@ -404,6 +405,72 @@ function notifier_set_view_listener () {
 
 	    elgg_extend_view("object/{$type->subtype}", 'notifier/view_listener');
 	}
+}
+
+/**
+ * Delete related notifications when notification subject or target is deleted
+ * 
+ * @param string   $event       The event type ('delete')
+ * @param string   $object_type The type of the object being deleted
+ * @param stdClass $object      The entity being deleted
+ * @return boolean
+ */
+function notifier_delete_event_listener ($event, $object_type, $object) {
+	// This currently supports only ElggEntities so skip ElggAnnotations
+	if ($object_type === 'annotations') {
+		return true;
+	}
+
+	// Notifications don't have notifications
+	if ($object->getSubtype() == 'notification') {
+		return true;
+	}
+
+	// Override access so we can delete notifications
+	// not belonging to currently logged in user
+	$ia = elgg_set_ignore_access(true);
+
+	switch ($object_type) {
+		case 'user':
+			// Notifications triggered by the user being deleted
+			$notifications = elgg_get_entities_from_metadata(array(
+				'type' => 'object',
+				'subtype' => 'notification',
+				'limit' => false,
+				'metadata_name_value_pairs' => array(
+					array(
+						'name' => 'subject_guid',
+						'value' => $object->getGUID()
+					)
+				)
+			));
+			break;
+		case 'object':
+			// Notifications which have the entity being deleted as their target
+			$notifications = elgg_get_entities_from_metadata(array(
+				'type' => 'object',
+				'subtype' => 'notification',
+				'limit' => false,
+				'metadata_name_value_pairs' => array(
+					array(
+						'name' => 'target_guid',
+						'value' => $object->getGUID()
+					)
+				)
+			));
+			break;
+		default:
+			// No notifications to delete
+			return true;
+	}
+
+	foreach ($notifications as $item) {
+		$item->delete();
+	}
+
+	elgg_set_ignore_access($ia);
+
+	return true;
 }
 
 elgg_register_event_handler('init', 'system', 'notifier_init');
