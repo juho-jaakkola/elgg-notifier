@@ -9,7 +9,8 @@
 $entity_guid = (get_input('entity_guid')) ? (get_input('entity_guid')) : ($vars['entity']->guid);
 
 // Mark notification read only if user is looking at the full view
-if ($entity_guid && ($vars['full_view'] || $vars['full'])) {
+// Thewire is an exception since it doesn't have a full view
+if ($entity_guid && ($vars['full_view'] || $vars['full'] || $vars['entity']->getSubtype() == 'thewire')) {
 	$user_guid = elgg_get_logged_in_user_guid();
 
 	// Get unread notifications related to the entity
