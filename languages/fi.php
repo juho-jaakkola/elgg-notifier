@@ -9,6 +9,13 @@ $lang = array(
 	'notifier:none' => 'Ei ilmoituksia',
 	'notifier:unreadcount' => 'Lukemattomat ilmoitukset (%s)',
 	'notification:method:notifier' => 'Ilmoitukset',
+	'notifier:dismiss_all' => 'Merkitse luetuiksi',
+	'notifier:clear_all' => 'Tyhjennä',
+	'notifier:deleteconfirm' => 'Tämä poistaa kaikki ilmoitukset riippumatta siitä, oletko lukenut ne. Haluatko varmasti jatkaa?',
+
+	// System messages
+	'notifier:message:dismissed_all' => 'Merkittiin kaikki ilmoitukset luetuiksi',
+	'notifier:message:deleted_all' => 'Poistettiin kaikki ilmoitukset',
 
 	// Error messages
 	'notifier:error:not_found' => 'Ilmoitusta ei löytynyt',

@@ -9,6 +9,13 @@ $lang = array(
 	'notifier:none' => 'No notifications',
 	'notifier:unreadcount' => 'Unread notifications (%s)',
 	'notification:method:notifier' => 'Notifier',
+	'notifier:dismiss_all' => 'Dismiss all',
+	'notifier:clear_all' => 'Clear all',
+	'notifier:deleteconfirm' => 'This removes all notifications including the unread ones. Are you sure you want to continue?',
+
+	// System messages
+	'notifier:message:dismissed_all' => 'All notifications dismissed succesfully',
+	'notifier:message:deleted_all' => 'All notifications cleared succesfully',
 
 	// Error messages
 	'notifier:error:not_found' => 'This notification was not found',

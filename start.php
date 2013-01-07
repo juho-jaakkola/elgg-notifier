@@ -32,6 +32,10 @@ function notifier_init () {
 
 	elgg_register_event_handler('create', 'annotation', 'notifier_comment_notifications');
 	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
+
+	$action_path = elgg_get_plugins_path() . 'notifier/actions/notifier/';
+	elgg_register_action('notifier/dismiss', $action_path . 'dismiss.php');
+	elgg_register_action('notifier/clear', $action_path . 'clear.php');
 }
 
 /**
@@ -106,7 +110,6 @@ function notifier_get_unread ($options = array()) {
 		'type' => 'object',
 		'subtype' => 'notification',
 		'limit' => false,
-		'count' => true,
 		'owner_guid' => elgg_get_logged_in_user_guid(),
 		'metadata_name_value_pairs' => array(
 			'name' => 'status',
