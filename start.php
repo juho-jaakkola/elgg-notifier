@@ -410,14 +410,15 @@ function notifier_set_view_listener () {
 /**
  * Delete related notifications when notification subject or target is deleted
  * 
- * @param string   $event       The event type ('delete')
- * @param string   $object_type The type of the object being deleted
- * @param stdClass $object      The entity being deleted
+ * @param string   $event       The event type (delete)
+ * @param string   $object_type The type of the object being deleted (object,
+ * 								group, user, annotation, relationship, metadata)
+ * @param stdClass $object      The object being deleted
  * @return boolean
  */
 function notifier_delete_event_listener ($event, $object_type, $object) {
-	// This currently supports only ElggEntities so skip ElggAnnotations
-	if ($object_type === 'annotations') {
+	// This currently supports only ElggEntities
+	if (!$object instanceof ElggEntity) {
 		return true;
 	}
 
