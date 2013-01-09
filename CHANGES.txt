@@ -1,3 +1,11 @@
+Version 1.8.2 (2013-01-09):
+
+ Bugfixes:
+  * Fixes fatal error when deleting some objects not instances of ElggEntity
+  * Fixes the title of notification page
+  * Non-logged-in users are forwarded away from notifications page
+
+
 Version 1.8.1 (2013-01-07):
 
  Enhancements:
