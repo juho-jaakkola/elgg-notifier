@@ -243,7 +243,7 @@ function notifier_handle_mentions ($object, $type) {
 
 	global $CONFIG;
 
-	if ($type == 'annotation' && $object->name != 'generic_comment') {
+	if ($type == 'annotation' && $object->name != 'generic_comment' && $object->name != 'group_topic_post') {
 		return NULL;
 	}
 
