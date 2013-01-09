@@ -84,7 +84,7 @@ function notifier_page_handler ($page) {
 
 	$body = elgg_view_layout('content', $params);
 
-	echo elgg_view_page('title', $body);
+	echo elgg_view_page($params['title'], $body);
 
 	return true;
 }
