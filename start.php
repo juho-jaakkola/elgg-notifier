@@ -31,7 +31,7 @@ function notifier_init () {
 	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_object_notifications');
 	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
 
-	elgg_register_event_handler('create', 'annotation', 'notifier_comment_notifications');
+	elgg_register_event_handler('create', 'annotation', 'notifier_annotation_notifications');
 	elgg_register_event_handler('delete', 'all', 'notifier_delete_event_listener');
 
 	$action_path = elgg_get_plugins_path() . 'notifier/actions/notifier/';
@@ -178,20 +178,34 @@ function notifier_object_notifications($hook, $type, $message, $params) {
 }
 
 /**
- * Handle comment notifications
- */ 
-function notifier_comment_notifications($event, $type, $annotation) {
-	if ($annotation->name == "generic_comment" ||
-		$annotation->name == "group_topic_post" ||
-		$annotation->name == "likes"
-		) {
-		$entity = get_entity($annotation->entity_guid);
-		$owner_guid = $entity->getOwnerGUID();
+ * Handle annotation notifications
+ *
+ * @param string         $event
+ * @param string         $type
+ * @param ElggAnnotation $annotation
+ * @return boolean
+ */
+function notifier_annotation_notifications($event, $type, $annotation) {
+	$supported_types = array('generic_comment', 'group_topic_post', 'likes');
 
-		$subject_guid = $annotation->owner_guid;
+	if (!in_array($annotation->name, $supported_types)) {
+		return true;
+	}
 
-		// Do not notify about own annotations
-		if ($subject_guid != $owner_guid) {
+	$entity = $annotation->getEntity();
+	$owner_guid = $entity->getOwnerGUID();
+
+	$subject_guid = $annotation->owner_guid;
+
+	// Do not notify about own annotations
+	if ($subject_guid != $owner_guid) {
+		// Check if user has enabled notifier for personal notifications
+		$metadata = elgg_get_metadata(array(
+			'metadata_name' => 'notification:method:notifier',
+			'guid' => $owner_guid
+		));
+
+		if (!empty($metadata[0]->value)) {
 			if ($annotation->name == 'likes') {
 				$title = 'likes:notifications:subject';
 			} else {
@@ -208,9 +222,9 @@ function notifier_comment_notifications($event, $type, $annotation) {
 				'subject_guid' => $subject_guid
 			));
 		}
-
-		notifier_handle_mentions($annotation, 'annotation');
 	}
+
+	notifier_handle_mentions($annotation, 'annotation');
 
 	return TRUE;
 }
