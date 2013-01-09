@@ -76,6 +76,8 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
  * Displays a list of all notifications
  */
 function notifier_page_handler ($page) {
+	gatekeeper();
+
 	elgg_load_library('elgg:notifier');
 
 	$params = notifier_get_page_content_list();
