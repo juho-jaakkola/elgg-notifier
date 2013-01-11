@@ -13,6 +13,8 @@ $lang = array(
 	'notifier:clear_all' => 'Tyhjennä',
 	'notifier:deleteconfirm' => 'Tämä poistaa kaikki ilmoitukset riippumatta siitä, oletko lukenut ne. Haluatko varmasti jatkaa?',
 
+	'item:object:notification' => 'Notifier-ilmoitukset',
+
 	// System messages
 	'notifier:message:dismissed_all' => 'Merkittiin kaikki ilmoitukset luetuiksi',
 	'notifier:message:deleted_all' => 'Poistettiin kaikki ilmoitukset',

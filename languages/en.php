@@ -13,6 +13,8 @@ $lang = array(
 	'notifier:clear_all' => 'Clear all',
 	'notifier:deleteconfirm' => 'This removes all notifications including the unread ones. Are you sure you want to continue?',
 
+	'item:object:notification' => 'Notifier items',
+
 	// System messages
 	'notifier:message:dismissed_all' => 'All notifications dismissed succesfully',
 	'notifier:message:deleted_all' => 'All notifications cleared succesfully',
