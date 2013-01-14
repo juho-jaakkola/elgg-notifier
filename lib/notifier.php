@@ -41,6 +41,7 @@ function notifier_get_page_content_list () {
 		'subtype' => 'notification',
 		'limit' => 20,
 		'owner_guid' => elgg_get_logged_in_user_guid(),
+		'full_view' => false,
 		'order_by_metadata' => array(
 			'name' => 'status',
 			'direction' => DESC

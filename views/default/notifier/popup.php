@@ -14,6 +14,7 @@ $notifications = elgg_list_entities_from_metadata(array(
 	'type' => 'object',
 	'subtype' => 'notification',
 	'owner_guid' => elgg_get_logged_in_user_guid(),
+	'full_view' => false,
 	'order_by_metadata' => array(
 		'name' => 'status',
 		'direction' => DESC
