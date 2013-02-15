@@ -37,7 +37,7 @@
 }
 
 /* count of unread notifications in topbar icon */
-.notifier-new {
+#notifier-new {
 	color: white;
 	background-color: red;
 
