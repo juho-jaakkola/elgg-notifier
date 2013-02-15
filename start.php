@@ -53,7 +53,7 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 		$tooltip = elgg_echo("notifier:unreadcount", array($num_notifications));
 
 		if ($num_notifications != 0) {
-			$text .= "<span class=\"messages-new\">$num_notifications</span>";
+			$text .= "<span class=\"notifier-new\">$num_notifications</span>";
 		}
 
 		$item = ElggMenuItem::factory(array(
