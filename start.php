@@ -226,6 +226,8 @@ function notifier_annotation_notifications($event, $type, $annotation) {
 
 	notifier_handle_mentions($annotation, 'annotation');
 
+	notifier_handle_comment_tracker($annotation);
+
 	return TRUE;
 }
 
@@ -312,6 +314,57 @@ function notifier_handle_mentions ($object, $type) {
 					));
 				}
 			}
+		}
+	}
+}
+
+/**
+ * Create notifications for users tracking content with comment_tracker plugin.
+ * 
+ * @param object $annotation The annotation that was created
+ */
+function notifier_handle_comment_tracker ($annotation) {
+	// This feature requires the comment_tracker plugin
+	if (!elgg_is_active_plugin('comment_tracker')) {
+		return false;
+	}
+
+	$options = array(
+		'relationship' => COMMENT_TRACKER_RELATIONSHIP,
+		'relationship_guid' => $annotation->entity_guid,
+		'inverse_relationship' => true,
+		'types' => 'user',
+		'limit' => 0
+	);
+
+	$users = elgg_get_entities_from_relationship($options);
+
+	foreach ($users as $user) {
+		// Make sure user is real
+		// Do not notify the author of comment
+		if ($user instanceof ElggUser && $user->guid != $annotation->owner_guid) {
+			if ($user->guid == $entity->owner_guid) {
+				// user is the owner of the entity being commented on
+				continue;
+			}
+
+			$site_guid = elgg_get_site_entity()->getGUID();
+			// comment_tracker doesn't keep track of used methods but blocked methods instead
+			if (check_entity_relationship($user->guid, 'block_comment_notifynotifier', $site_guid))	{
+				continue;
+			}
+
+			$target = get_entity($annotation->entity_guid);
+			$type = $target->getType();
+			$subtype = $target->getSubtype();
+			$title = "river:comment:$type:$subtype";
+
+			notifier_add_notification(array(
+				'title' => $title,
+				'user_guid' => $user->getGUID(),
+				'target_guid' => $target->getGUID(),
+				'subject_guid' => $annotation->owner_guid
+			));
 		}
 	}
 }
