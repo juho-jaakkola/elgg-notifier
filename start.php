@@ -229,6 +229,8 @@ function notifier_annotation_notifications($event, $type, $annotation) {
 
 	notifier_handle_comment_tracker($annotation);
 
+	notifier_handle_group_topic_replies($annotation);
+
 	return TRUE;
 }
 
@@ -365,6 +367,51 @@ function notifier_handle_comment_tracker ($annotation) {
 				'user_guid' => $user->getGUID(),
 				'target_guid' => $target->getGUID(),
 				'subject_guid' => $annotation->owner_guid
+			));
+		}
+	}
+}
+
+/**
+ * Create notifications of group discussion replies.
+ * 
+ * Notify all group members who have subscribed to group notifications
+ * using notifier as a notification method.
+ * 
+ * @param object $reply The reply that was posted
+ */
+function notifier_handle_group_topic_replies ($reply) {
+	if ($reply->name != 'group_topic_post') {
+		return false;
+	}
+
+	$topic = $reply->getEntity();
+
+	$interested_users = elgg_get_entities_from_relationship(array(
+		'relationship' => 'notifynotifier',
+		'relationship_guid' => $topic->getContainerGUID(),
+		'inverse_relationship' => true,
+		'type' => 'user',
+		'limit' => 0,
+	));
+
+	if ($interested_users) {
+		foreach ($interested_users as $user) {
+			// Do not notify the user who posted the reply
+			if ($user->getGUID() == elgg_get_logged_in_user_guid()) {
+				continue;
+			}
+
+			// The owner of the topic has already been notified
+			if ($user->getGUID() == $topic->getOwnerGUID()) {
+				continue;
+			}
+
+			notifier_add_notification(array(
+				'title' => 'river:reply:object:groupforumtopic',
+				'user_guid' => $user->getGUID(),
+				'target_guid' => $topic->getGUID(),
+				'subject_guid' => $reply->owner_guid
 			));
 		}
 	}
