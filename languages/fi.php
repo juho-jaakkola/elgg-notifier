@@ -18,10 +18,12 @@ $lang = array(
 	// System messages
 	'notifier:message:dismissed_all' => 'Merkittiin kaikki ilmoitukset luetuiksi',
 	'notifier:message:deleted_all' => 'Poistettiin kaikki ilmoitukset',
+	'notifier:message:deleted' => 'Poistettiin ilmoitus',
 
 	// Error messages
 	'notifier:error:not_found' => 'Ilmoitusta ei löytynyt',
 	'notifier:error:target_not_found' => 'Ilmoituksen kohdetta ei löytynyt, joten se on todennäköisesti poistettu.',
+	'notifier:error:cannot_delete' => 'Ilmoituksen poistaminen epäonnistui',
 
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s vastasi keskusteluun %s',

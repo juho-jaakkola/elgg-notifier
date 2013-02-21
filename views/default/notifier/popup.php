@@ -14,10 +14,13 @@ $notifications = elgg_get_entities_from_metadata(array(
 ));
 
 if ($notifications) {
+	// Use "widgets" context to tell that we're displaying the popup instead of a full list
+	elgg_push_context('widgets');
 	$notification_list = elgg_view_entity_list($notifications, array(
 		'full_view' => false,
 		'pagination' => false,
 	));
+	elgg_pop_context();
 
 	// Link to all notifications
 	$link = elgg_view('output/url', array(

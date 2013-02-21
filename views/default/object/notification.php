@@ -16,7 +16,7 @@ if (!$target || !$subject) {
 	$subject = $subject->username;
 	$user = $notification->getOwnerEntity()->username;
 	$notice = "Failed to view notification $title from user $subject to user $user";
-	elgg_add_admin_notice('notifier_no_targer', $notice);
+	elgg_add_admin_notice('notifier_no_target', $notice);
 
 	// The entity to notify about doesn't exist anymore so delete the notification
 	$notification->delete();
@@ -42,15 +42,21 @@ $subject_link = elgg_view('output/url', array(
 	'is_trusted' => true,
 ));
 
-$type = $target->getType();
-$subtype = $target->getSubtype();
-
 $subtitle = elgg_echo($notification->title, array($subject_link, $target_link));
 
 $time = elgg_view_friendly_time($notification->time_created);
 
-if (elgg_instanceof($notification, 'object')) {
-	$metadata = elgg_view('navigation/menu/metadata', $vars);
+if (elgg_in_context('widgets')) {
+	// Do not show the delete link in widget view
+	$metadata = '';
+} else {
+	// Use link instead of entity menu since we don't want any links besides delete
+	$metadata = elgg_view('output/confirmlink', array(
+		'name' => 'delete',
+		'href' => "action/notifier/delete?guid={$notification->getGUID()}",
+		'text' => elgg_view_icon('delete'),
+		'class' => 'float-alt',
+	));
 }
 
 $icon = elgg_view_entity_icon($subject, 'tiny');
