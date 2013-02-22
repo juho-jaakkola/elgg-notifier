@@ -187,7 +187,7 @@ function notifier_object_notifications($hook, $type, $message, $params) {
  * @return boolean
  */
 function notifier_annotation_notifications($event, $type, $annotation) {
-	$supported_types = array('generic_comment', 'group_topic_post', 'likes');
+	$supported_types = array('generic_comment', 'group_topic_post', 'likes', 'messageboard');
 
 	if (!in_array($annotation->name, $supported_types)) {
 		return true;
@@ -207,19 +207,28 @@ function notifier_annotation_notifications($event, $type, $annotation) {
 		));
 
 		if (!empty($metadata[0]->value)) {
-			if ($annotation->name == 'likes') {
-				$title = 'likes:notifications:subject';
-			} else {
-				$type = $entity->getType();
-				$subtype = $entity->getSubtype();
+			$target_guid = $entity->getGUID();
 
-				$title = "river:comment:$type:$subtype";
+			switch ($annotation->name) {
+				case 'likes':
+					$title = 'likes:notifications:subject';
+					break;
+				case 'messageboard':
+					$title = 'river:messageboard:user:default';
+					$target_guid = $owner_guid;
+					break;
+				default:
+					// We'll assume it's a comment
+					$type = $entity->getType();
+					$subtype = $entity->getSubtype();
+					$title = "river:comment:$type:$subtype";
+					break;
 			}
 
 			notifier_add_notification(array(
 				'title' => $title,
 				'user_guid' => $owner_guid,
-				'target_guid' => $entity->getGUID(),
+				'target_guid' => $target_guid,
 				'subject_guid' => $subject_guid
 			));
 		}
@@ -522,6 +531,9 @@ function notifier_set_view_listener () {
 
 	    elgg_extend_view("object/{$type->subtype}", 'notifier/view_listener');
 	}
+
+	// Some manual additions
+	elgg_extend_view('profile/wrapper', 'notifier/view_listener');
 }
 
 /**

@@ -6,13 +6,27 @@
  * @uses $vars['entity_guid'] An elgg entity guid that may be used instead of $vars['entity'] 
  */
 
-$entity_guid = (get_input('entity_guid')) ? (get_input('entity_guid')) : ($vars['entity']->guid);
+$target_guid = (get_input('entity_guid')) ? (get_input('entity_guid')) : ($vars['entity']->guid);
+
+$user_guid = elgg_get_logged_in_user_guid();
+
+$override = false;
+
+if (elgg_in_context('profile')) {
+	// User profile doesn't have a full view so override the full_view check
+	if ($user_guid = elgg_get_page_owner_guid()) {
+		$override = true;
+		$target_guid = elgg_get_page_owner_guid();
+	}
+}
+
+// Thewire doesn't have a full view so override the full_view check
+if ($vars['entity'] && $vars['entity']->getSubtype() == 'thewire') {
+	$override = true;
+}
 
 // Mark notification read only if user is looking at the full view
-// Thewire is an exception since it doesn't have a full view
-if ($entity_guid && ($vars['full_view'] || $vars['full'] || $vars['entity']->getSubtype() == 'thewire')) {
-	$user_guid = elgg_get_logged_in_user_guid();
-
+if ($target_guid && ($vars['full_view'] || $vars['full'] || $override)) {
 	// Get unread notifications related to the entity
 	$notifications = elgg_get_entities_from_metadata(array(
 		'type' => 'object',
@@ -25,7 +39,7 @@ if ($entity_guid && ($vars['full_view'] || $vars['full'] || $vars['entity']->get
 			),
 			array(
 				'name' => 'target_guid',
-				'value' => $entity_guid
+				'value' => $target_guid
 			)
 		)
 	));

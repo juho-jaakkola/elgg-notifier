@@ -23,10 +23,12 @@ if (!$target || !$subject) {
 	return false;
 }
 
-if (empty($target->title)) {
-	$text = elgg_get_excerpt($target->description, 20);
-} else {
+if (!empty($target->title)) {
 	$text = $target->title;
+} elseif (!empty($target->name)) {
+	$text = $target->name;
+} else {
+	$text = elgg_get_excerpt($target->description, 20);
 }
 
 // Route through notifier page handler to update notification status
