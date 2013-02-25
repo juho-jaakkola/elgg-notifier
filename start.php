@@ -30,6 +30,7 @@ function notifier_init () {
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
 	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_object_notifications');
 	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
+	elgg_register_plugin_hook_handler('action', 'friends/add', 'notifier_friend_notifications');
 
 	elgg_register_event_handler('create', 'annotation', 'notifier_annotation_notifications');
 	elgg_register_event_handler('delete', 'all', 'notifier_delete_event_listener');
@@ -176,6 +177,27 @@ function notifier_object_notifications($hook, $type, $message, $params) {
 	}
 
 	return $message;
+}
+
+/**
+ * Notify when user is added as someone's friend
+ */
+function notifier_friend_notifications ($hook, $type, $return, $params) {
+	$friend_guid = get_input('friend');
+	$user_guid = elgg_get_logged_in_user_guid();
+
+	if ($friend_guid) {
+		// Having the logged in user as target is illogical but this way
+		// we can search by target_guid in view notifier/view_listener
+		notifier_add_notification(array(
+			'title' => 'friend:newfriend:subject',
+			'user_guid' => $friend_guid,
+			'target_guid' => $user_guid,
+			'subject_guid' => $user_guid,
+		));
+	}
+
+	return $return;
 }
 
 /**

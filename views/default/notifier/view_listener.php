@@ -14,10 +14,9 @@ $override = false;
 
 if (elgg_in_context('profile')) {
 	// User profile doesn't have a full view so override the full_view check
-	if ($user_guid = elgg_get_page_owner_guid()) {
-		$override = true;
-		$target_guid = elgg_get_page_owner_guid();
-	}
+	$override = true;
+	// Parameters are not available so use page owner as target
+	$target_guid = elgg_get_page_owner_guid();
 }
 
 // Thewire doesn't have a full view so override the full_view check
