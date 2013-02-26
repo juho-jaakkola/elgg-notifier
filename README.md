@@ -9,4 +9,5 @@ notifier
   * Notification won't appear again if there is unread notification that is exactly the same
   * Automatically removes read notifications after one week
   * Notifications can be dismissed or deleted manually
-  * Supports mentions plugin (https://github.com/Elgg/mentions)
+  * Built-in support for mentions plugin (https://github.com/Elgg/mentions)
+  * Built-in support for comment_tracker plugin (https://github.com/beck24/Comment-Tracker-1.8.x)

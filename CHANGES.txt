@@ -1,3 +1,20 @@
+Version 1.8.3 (2012-02-26):
+
+ Enhancements:
+  * Added support for group discussions
+  * Added support for message board
+  * Added support for notifications about new friends
+  * Added built-in support for comment_tracker plugin
+  * Added "Dismiss all" link to popup module
+  * Added possibility to delete individual notifications
+
+ Bugfixes:
+  * Notifications about new annotations now respect personal notification settings
+  * Added missing translations and fixed some typos
+  * Plugins extending full_view do not mess up the notification lists
+  * Plugin isn't anymore depending on the css of the messages plugin
+
+
 Version 1.8.2 (2013-01-09):
 
  Bugfixes:
