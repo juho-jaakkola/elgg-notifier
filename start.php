@@ -298,7 +298,7 @@ function notifier_handle_mentions ($object, $type) {
 	foreach ($fields as $field) {
 		$content = $object->$field;
 		// it's ok in in this case if 0 matches == FALSE
-		if (preg_match_all($CONFIG->mentions_match_regexp, $content, $matches)) {
+		if (preg_match_all(mentions_get_regex(), $content, $matches)) {
 			// match against the 2nd index since the first is everything
 			foreach ($matches[1] as $username) {
 
