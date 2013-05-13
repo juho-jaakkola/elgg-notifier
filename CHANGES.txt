@@ -1,4 +1,10 @@
-Version 1.8.3 (2012-02-26):
+Version 1.8.4 (2013-05-13):
+
+ Bugfixes:
+  * Works now with the latest version of mentions plugin
+
+
+Version 1.8.3 (2013-02-26):
 
  Enhancements:
   * Added support for group discussions
