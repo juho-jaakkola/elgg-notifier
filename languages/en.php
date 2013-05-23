@@ -27,6 +27,16 @@ $lang = array(
 
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s replied on the discussion topic %s',
+
+	// Admin panel
+	'notifier:settings:desc' => 'Default notification settings for new users',
+	'notifier:settings:enable_personal' => 'Personal notifications',
+	'notifier:settings:enable_personal:desc' => "A notification is added when an action (comment, like, etc.) is performed on user's content.",
+	'notifier:settings:enable_collections' => 'Friends',
+	'notifier:settings:enable_collections:desc' => "A notification is added when user's friend creates new content.",
+	'notifier:settings:groups:desc' => 'Default notification setting for new group members',
+	'notifier:settings:enable_groups' => 'Group notifications',
+	'notifier:settings:enable_groups:desc' => 'A notification is added when new content is added to a group that the user is a member of.',
 );
 
 add_translation('en', $lang);

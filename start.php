@@ -5,6 +5,8 @@
  * @package Notifier
  */
 
+elgg_register_event_handler('init', 'system', 'notifier_init');
+
 function notifier_init () {
 	elgg_register_library('elgg:notifier', elgg_get_plugins_path() . 'notifier/lib/notifier.php');
 
@@ -34,6 +36,8 @@ function notifier_init () {
 
 	elgg_register_event_handler('create', 'annotation', 'notifier_annotation_notifications');
 	elgg_register_event_handler('delete', 'all', 'notifier_delete_event_listener');
+	elgg_register_event_handler('create', 'user', 'notifier_enable_for_new_user');
+	elgg_register_event_handler('join', 'group', 'notifier_enable_for_new_group_member');
 
 	$action_path = elgg_get_plugins_path() . 'notifier/actions/notifier/';
 	elgg_register_action('notifier/dismiss', $action_path . 'dismiss.php');
@@ -625,4 +629,56 @@ function notifier_delete_event_listener ($event, $object_type, $object) {
 	return true;
 }
 
-elgg_register_event_handler('init', 'system', 'notifier_init');
+/**
+ * Enable notifier by default for new users according to plugin settings.
+ * 
+ * We do this using 'create, user' event instead of 'register, user' plugin
+ * hook so that it affects also users created by an admin.
+ * 
+ * @param  string   $event 'create'
+ * @param  string   $type  'user'
+ * @param  ElggUser $user
+ * @return boolean
+ */
+function notifier_enable_for_new_user ($event, $type, $user) {
+	$personal = (boolean) elgg_get_plugin_setting('enable_personal', 'notifier');
+	$collections = (boolean) elgg_get_plugin_setting('enable_collections', 'notifier');
+
+	if ($personal) {
+		$prefix = "notification:method:notifier";
+		$user->$prefix = true;
+	}
+
+	if ($collections) {
+		/**
+		 * This function is triggered before invite code is checked so it's
+		 * enough just to add the setting. Notifications plugin will take care
+		 * of adding the 'notifynotifier' relationship in case user was invited.
+		 */
+		$user->collections_notifications_preferences_notifier = '-1';
+	}
+
+	$user->save();
+
+	return true;
+}
+
+/**
+ * Enable notifier as notification method when joining a group.
+ * 
+ * @param string $event  'join'
+ * @param string $type   'group'
+ * @param array  $params Array containing ElggUser and ElggGroup
+ */
+function notifier_enable_for_new_group_member ($event, $type, $params) {
+	$group = $params['group'];
+	$user = $params['user'];
+
+	$enabled = (boolean) elgg_get_plugin_setting('enable_groups', 'notifier');
+
+	if ($enabled) {
+		if (elgg_instanceof($group, 'group') && elgg_instanceof($user, 'user')) {
+			add_entity_relationship($user->guid, 'notifynotifier', $group->guid);
+		}
+	}
+}
