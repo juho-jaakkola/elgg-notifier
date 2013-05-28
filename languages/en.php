@@ -28,15 +28,27 @@ $lang = array(
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s replied on the discussion topic %s',
 
-	// Admin panel
+	// Plugin settings
 	'notifier:settings:desc' => 'Default notification settings for new users',
 	'notifier:settings:enable_personal' => 'Personal notifications',
 	'notifier:settings:enable_personal:desc' => "A notification is added when an action (comment, like, etc.) is performed on user's content.",
 	'notifier:settings:enable_collections' => 'Friends',
-	'notifier:settings:enable_collections:desc' => "A notification is added when user's friend creates new content.",
+	'notifier:settings:enable_collections:desc' => "A notification is added when any of user's friends create new content.",
 	'notifier:settings:groups:desc' => 'Default notification setting for new group members',
 	'notifier:settings:enable_groups' => 'Group notifications',
 	'notifier:settings:enable_groups:desc' => 'A notification is added when new content is added to a group that the user is a member of.',
+
+	// Admin panel
+	'admin:notifier' => 'Notifier',
+	'admin:notifier:enable' => 'Enable notifications',
+	'notifier:admin:enable:description_link' => 'here',
+	'notifier:admin:enable:description' => 'These settings affect only new users. You can enable notifier also for existing users <u>%s</u>.',
+	'notifier:admin:enable:warning' => "<strong>Warning!</strong> Having notifier enabled for all users may result in a lot of writes to the database. Therefore it doesn't scale well for large sites.",
+	'notifier:admin:not_using_personal' => "There are %s users who haven't enabled notifier for personal notifications.",
+	'notifier:admin:not_using_collections' => "There are %s users who haven't enabled notifier for friend collections.",
+	'notifier:admin:not_using_groups' => "There are %s group memberships that do not have notifier as a notification method.",
+	'notifier:admin:activate' => 'Enable',
+	'notifier:admin:all_enabled' => 'All notifications have already been enabled!',
 );
 
 add_translation('en', $lang);

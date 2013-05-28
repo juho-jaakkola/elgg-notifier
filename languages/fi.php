@@ -28,7 +28,7 @@ $lang = array(
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s vastasi keskusteluun %s',
 
-	// Admin panel
+	// Plugin settings
 	'notifier:settings:desc' => 'Oletusasetukset uusille käyttäjille',
 	'notifier:settings:enable_personal' => 'Henkilökohtaiset ilmoitukset',
 	'notifier:settings:enable_personal:desc' => 'Käyttäjä saa ilmoituksen, kun joku suorittaa toiminnon (tykkäys, kommentointi, tms) hänen luomalleen sisällölle.',
@@ -37,6 +37,18 @@ $lang = array(
 	'notifier:settings:groups:desc' => 'Oletusasetukset ryhmien uusille jäsenille',
 	'notifier:settings:enable_groups' => 'Ryhmien ilmoitukset',
 	'notifier:settings:enable_groups:desc' => 'Käyttäjä saa ilmoituksen, kun joku lisää uutta sisältöä ryhmään, jossa hän on jäsenenä.',
+
+	// Admin panel
+	'admin:notifier' => 'Notifier',
+	'admin:notifier:enable' => 'Ilmoitusten käyttöönotto',
+	'notifier:admin:enable:description_link' => 'tänne',
+	'notifier:admin:enable:description' => 'Nämä asetukset vaikuttavat vain uusiin käyttäjiin. Jos haluat aktivoida ilmoitukset myös vanhoille käyttäjille, siirry <u>%s</u>.',
+	'notifier:admin:enable:warning' => "<strong>Varoitus!</strong> Ilmoitusten käyttäminen saattaa aiheuttaa paljon tallennuksia tietokantaan. Tästä syystä toiminto ei sovi suurille sivustoille.",
+	'notifier:admin:not_using_personal' => "Sivustolla on %s käyttäjää, jotka eivät ole aktivoineet henkilökohtaisia ilmoituksia.",
+	'notifier:admin:not_using_collections' => "Sivustolla on %s käyttäjää, jotka eivät ole aktivoineet ilmoituksia ystävien toiminnasta.",
+	'notifier:admin:not_using_groups' => "Sivustolla on %s ryhmän jäsenyyttä, joihin ei ole aktivoitu ilmoituksia ryhmän toiminnasta.",
+	'notifier:admin:activate' => 'Aktivoi',
+	'notifier:admin:all_enabled' => 'Kaikki ilmoitukset on jo otettu käyttöön!',
 );
 
 add_translation('fi', $lang);
