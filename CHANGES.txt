@@ -1,3 +1,10 @@
+Version 1.8.5 (2013-08-07):
+
+ Enhancements:
+  * Admin can set notifier enabled by default for new users and new group members
+  * Admin can run bulk operations to enable notifier for existing users
+
+
 Version 1.8.4 (2013-05-13):
 
  Bugfixes:
