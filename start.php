@@ -117,6 +117,9 @@ function notifier_page_handler ($page) {
 	$path = elgg_get_plugins_path() . 'notifier/pages/notifier/';
 
 	switch ($page[0]) {
+		case 'popup':
+			include_once($path . 'popup.php');
+			break;
 		case 'subjects':
 			set_input('guid', $page[1]);
 			include_once($path . 'subjects.php');

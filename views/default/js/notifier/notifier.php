@@ -43,8 +43,31 @@ elgg.notifier.dismissAll = function(e) {
 	e.preventDefault();
 };
 
+/**
+ * Fetch notifications and add them to popup.
+ * 
+ * @param {Object} e
+ * @return void
+ */
+elgg.notifier.popup = function(e) {
+	elgg.get('notifier/popup', {
+		success: function(output) {
+			$('#notifier-popup .elgg-body').html(output);
+
+			$('.elgg-notifier-unread').each(function() {
+				// Found an unread notification so display the "Dismiss all" icon
+				$('#notifier-dismiss-all').removeClass('hidden');
+				return false
+			});
+		}
+	});
+
+	e.preventDefault();
+};
+
 elgg.notifier.init = function() {
 	$('#notifier-dismiss-all').live('click', elgg.notifier.dismissAll);
+	$('#notifier-popup-link').live('click', elgg.notifier.popup);
 };
 
 elgg.register_hook_handler('getOptions', 'ui.popup', elgg.ui.notifierPopupHandler);
