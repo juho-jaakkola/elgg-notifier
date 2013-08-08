@@ -26,21 +26,14 @@ if ($vars['entity'] && $vars['entity']->getSubtype() == 'thewire') {
 
 // Mark notification read only if user is looking at the full view
 if ($target_guid && ($vars['full_view'] || $vars['full'] || $override)) {
-	// Get unread notifications related to the entity
-	$notifications = elgg_get_entities_from_metadata(array(
+	// Get notifications related to the entity
+	$notifications = elgg_get_entities_from_relationship(array(
 		'type' => 'object',
 		'subtype' => 'notification',
 		'owner_guid' => $user_guid,
-		'metadata_name_value_pairs' => array(
-			array(
-				'name' => 'status',
-				'value' => 'unread'
-			),
-			array(
-				'name' => 'target_guid',
-				'value' => $target_guid
-			)
-		)
+		'relationship_guid' => $target_guid,
+		'relationship' => 'hasObject',
+		'inverse_relationship' => true,
 	));
 
 	// Mark all the notifications related to this entity as "read"

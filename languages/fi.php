@@ -28,6 +28,11 @@ $lang = array(
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s vastasi keskusteluun %s',
 
+	// Likes plugin
+	'likes:notifications:summary' => '%s tykkää kohteesta %s',
+	'likes:notifications:summary:2' => '%s ja %s tykkäävät kohteesta %s',
+	'likes:notifications:summary:n' => '%s ja %s muuta tykkäävät kohteesta %s',
+
 	// Plugin settings
 	'notifier:settings:desc' => 'Oletusasetukset uusille käyttäjille',
 	'notifier:settings:enable_personal' => 'Henkilökohtaiset ilmoitukset',

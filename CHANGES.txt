@@ -1,3 +1,11 @@
+Version 1.9.0 (2013-mm-dd):
+
+ Enhancements:
+  * Better performance thanks to using the Elgg 1.9 notifications system
+  * Some separate events are combined into a single notification
+  * Notifications popup is fetched on demand
+
+
 Version 1.8.5 (2013-08-07):
 
  Enhancements:

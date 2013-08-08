@@ -1,12 +1,15 @@
 <?php
 /**
- * Extended class for notification functionalities
+ * Class for notification functionalities
  *
- * @property int $status The status of the notification (read, unread)
- * @property int $subject_guid User who triggered the notification
- * @property int $target_guid Content that the notification is about
+ * @property int    $status The status of the notification (read, unread)
+ * @property string $event  String "action:type:subtype" that can be used
+ *                          to add more subjects to a notification later
  */
 class ElggNotification extends ElggObject {
+
+	const HAS_ACTOR = "hasActor";
+	const HAS_OBJECT = "hasObject";
 
 	/** Override */
 	protected function initializeAttributes() {
@@ -16,30 +19,35 @@ class ElggNotification extends ElggObject {
 	}
 
 	/**
-	 * Set guid of the user triggering the notification
+	 * Set the user triggering the notification
 	 *
-	 * @param int $guid
+	 * @param ElggUser $user
 	 */
-	public function setSubjectGUID ($guid) {
-		$this->subject_guid = $guid;
+	public function setSubject ($user) {
+		return $this->addRelationship($user->guid, self::HAS_ACTOR);
 	}
 
 	/**
-	 * Set guid of the notification subject
+	 * Set the object involved in the notification
 	 * 
-	 * @param int $guid
+	 * @param ElggEntity $user
 	 */
-	public function setTargetGUID ($guid) {
-		$this->target_guid = $guid;
+	public function setTarget ($entity) {
+		return $this->addRelationship($entity->guid, self::HAS_OBJECT);
 	}
 
 	/**
 	 * Get the object of the notification
 	 *
-	 * @param ElggEntity
+	 * @return ElggObject
 	 */
-	public function getTargetEntity () {
-		return get_entity($this->target_guid);
+	public function getTarget () {
+		$object = $this->getEntitiesFromRelationship(array('relationship' => self::HAS_OBJECT));
+		if ($object) {
+			$object = $object[0];
+		}
+
+		return $object;
 	}
 
 	/**
@@ -47,8 +55,22 @@ class ElggNotification extends ElggObject {
 	 *
 	 * @return ElggUser
 	 */
-	public function getSubjectEntity () {
-		return get_entity($this->subject_guid);
+	public function getSubject () {
+		$subject = $this->getSubjects();
+		if ($subject) {
+			$subject = $subject[0];
+		}
+
+		return $subject;
+	}
+
+	/**
+	 * Get all users who participate in the notification
+	 * 
+	 * @return ElggUser[]|false
+	 */
+	public function getSubjects() {
+		return $this->getEntitiesFromRelationship(array('relationship' => self::HAS_ACTOR));
 	}
 
 	/**
@@ -72,8 +94,10 @@ class ElggNotification extends ElggObject {
 		$this->access_id = ACCESS_PRIVATE;
 		$this->status = 'unread';
 
-		parent::save();
+		$success = parent::save();
 
 		elgg_set_ignore_access($ia);
+
+		return $success;
 	}
 }

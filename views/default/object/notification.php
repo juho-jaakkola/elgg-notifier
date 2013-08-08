@@ -7,15 +7,16 @@
 
 $notification = $vars['entity'];
 
-$target = $notification->getTargetEntity();
-$subject = $notification->getSubjectEntity();
+$target = $notification->getTarget();
+$subjects = $notification->getSubjects();
 
-if (!$target || !$subject) {
+if (!$target || empty($subjects)) {
 	// Add admin notice to help trace the reason of invalid notifications
 	$title = $notification->title;
+	$event = $notification->event;
 	$subject = $subject->username;
 	$user = $notification->getOwnerEntity()->username;
-	$notice = "Failed to view notification $title from user $subject to user $user";
+	$notice = "Failed to view notification $title ($event) from user $subject to user $user";
 	elgg_add_admin_notice('notifier_no_target', $notice);
 
 	// The entity to notify about doesn't exist anymore so delete the notification
@@ -23,12 +24,15 @@ if (!$target || !$subject) {
 	return false;
 }
 
-if (!empty($target->title)) {
-	$text = $target->title;
-} elseif (!empty($target->name)) {
-	$text = $target->name;
+$display_name = $target->getDisplayName();
+if (!empty($display_name)) {
+	$text = $display_name;
 } else {
-	$text = elgg_get_excerpt($target->description, 20);
+	if (!empty($target->description)) {
+		$text = elgg_get_excerpt($target->description, 20);
+	} else {
+		$text = elgg_echo('unknown');
+	}
 }
 
 $target_link = elgg_view('output/url', array(
@@ -37,13 +41,21 @@ $target_link = elgg_view('output/url', array(
 	'is_trusted' => true,
 ));
 
-$subject_link = elgg_view('output/url', array(
-	'href' => $subject->getURL(),
-	'text' => $subject->name,
-	'is_trusted' => true,
-));
+$subject = $subjects[0];
+$event_view = str_replace(':', '/', $notification->event);
+$view = "notifier/messages/$event_view";
 
-$subtitle = elgg_echo($notification->title, array($subject_link, $target_link));
+if (count($subjects) > 1 && elgg_view_exists($view)) {
+	$subtitle = elgg_view($view, array('subjects' => $subjects, 'target_link' => $target_link));
+} else {
+	$subject_link = elgg_view('output/url', array(
+		'href' => $subject->getURL(),
+		'text' => $subject->name,
+		'is_trusted' => true,
+	));
+
+	$subtitle = elgg_echo($notification->title, array($subject_link, $target_link));
+}
 
 $time = elgg_view_friendly_time($notification->time_created);
 

@@ -14,7 +14,7 @@ function notifier_get_page_content_list () {
 		'name' => 'notification-settings',
 		'href' => 'notifications/personal',
 		'text' => elgg_echo('settings'),
-		'class' => 'elgg-button elgg-button-action',
+		'link_class' => 'elgg-button elgg-button-action',
 	));
 
 	// Link to remove all notifications
@@ -22,7 +22,7 @@ function notifier_get_page_content_list () {
 		'name' => 'notification-delete',
 		'href' => 'action/notifier/clear',
 		'text' => elgg_echo('notifier:clear_all'),
-		'class' => 'elgg-button elgg-button-delete elgg-requires-confirmation',
+		'link_class' => 'elgg-button elgg-button-delete elgg-requires-confirmation',
 		'is_action' => true,
 		'rel' => elgg_echo('notifier:deleteconfirm'),
 	));
@@ -32,7 +32,7 @@ function notifier_get_page_content_list () {
 		'name' => 'notification-dismiss',
 		'href' => 'action/notifier/dismiss',
 		'text' => elgg_echo('notifier:dismiss_all'),
-		'class' => 'elgg-button elgg-button-submit',
+		'link_class' => 'elgg-button elgg-button-submit',
 		'is_action' => true,
 	));
 

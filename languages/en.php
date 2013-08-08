@@ -28,6 +28,11 @@ $lang = array(
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s replied on the discussion topic %s',
 
+	// Likes plugin
+	'likes:notifications:summary' => '%s likes your post %s',
+	'likes:notifications:summary:2' => '%s and %s like your post %s',
+	'likes:notifications:summary:n' => '%s and %s other users like your post %s',
+
 	// Plugin settings
 	'notifier:settings:desc' => 'Default notification settings for new users',
 	'notifier:settings:enable_personal' => 'Personal notifications',

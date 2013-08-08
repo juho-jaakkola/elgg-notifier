@@ -14,18 +14,22 @@ $dbprefix = elgg_get_config('dbprefix');
  * 
  * This query ignores users who have explicitly disabled notifier
  */
-$personal_name_metastring_id = get_metastring_id('notification:method:notifier');
-$personal_count = elgg_get_entities(array(
+$options = array(
 	'types' => array('user'),
 	'count' => true,
-	'wheres' => array(
+);
+$personal_name_metastring_id = elgg_get_metastring_id('notification:method:notifier');
+if ($personal_name_metastring_id) {
+	// Exclude users who already have the setting (either on or off)
+	$options['wheres'] = array(
 		"NOT EXISTS (
 			SELECT 1 FROM {$dbprefix}metadata md
 			WHERE md.entity_guid = e.guid
 			AND md.name_id = $personal_name_metastring_id
 		)"
-	),
-));
+	);
+}
+$personal_count = elgg_get_entities($options);
 if ($personal_count) {
 	echo elgg_view('notifier/admin/enable_setting', array(
 		'setting' => 'personal',
@@ -36,18 +40,22 @@ if ($personal_count) {
 /**
  * Friend collection notifications
  */
-$collections_name_metastring_id = get_metastring_id('collections_notifications_preferences_notifier');
-$collections_count = elgg_get_entities(array(
+$options = array(
 	'types' => array('user'),
 	'count' => true,
-	'wheres' => array(
+);
+$collections_name_metastring_id = elgg_get_metastring_id('collections_notifications_preferences_notifier');
+if ($collections_name_metastring_id) {
+	// Exclude users who already have the setting (either on or off)
+	$options['wheres'] = array(
 		"NOT EXISTS (
 			SELECT 1 FROM {$dbprefix}metadata md
 			WHERE md.entity_guid = e.guid
 			AND md.name_id = $collections_name_metastring_id
 		)",
-	),
-));
+	);
+}
+$collections_count = elgg_get_entities($options);
 if ($collections_count) {
 	echo elgg_view('notifier/admin/enable_setting', array(
 		'setting' => 'collections',

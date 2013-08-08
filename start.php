@@ -13,6 +13,7 @@ function notifier_init () {
 	notifier_set_view_listener();
 
 	// Add hidden popup module to topbar
+	// TODO Add an empty module that is populated on demand (using XHR)
 	elgg_extend_view('page/elements/topbar', 'notifier/popup');
 
 	// Register the notifier's JavaScript
@@ -32,16 +33,19 @@ function notifier_init () {
 	elgg_extend_view('css/elgg', 'notifier/css');
 	elgg_extend_view('css/admin', 'notifier/admin/css');
 
-	register_notification_handler('notifier', 'notifier_notify_handler');
+	elgg_register_notification_method('notifier');
+	elgg_register_plugin_hook_handler('send', 'notification:notifier', 'notifier_notification_send');
+
+	// Notifications for likes
+	elgg_register_notification_event('annotation', 'likes', array('create'));
+	elgg_register_plugin_hook_handler('prepare', 'notification:create:annotation:likes', 'notifier_prepare_likes_notification');
 
 	// Hook handler for cron that removes old messages
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
-	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'notifier_object_notifications');
 	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
-	elgg_register_plugin_hook_handler('action', 'friends/add', 'notifier_friend_notifications');
+	//elgg_register_plugin_hook_handler('action', 'friends/add', 'notifier_friend_notifications');
 
-	elgg_register_event_handler('create', 'annotation', 'notifier_annotation_notifications');
-	elgg_register_event_handler('delete', 'all', 'notifier_delete_event_listener');
+	//elgg_register_event_handler('create', 'annotation', 'notifier_annotation_notifications');
 	elgg_register_event_handler('create', 'user', 'notifier_enable_for_new_user');
 	elgg_register_event_handler('join', 'group', 'notifier_enable_for_new_group_member');
 
@@ -61,14 +65,18 @@ function notifier_init () {
  */
 function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 	if (elgg_is_logged_in()) {
-		// get unread notifications
-		$num_notifications = (int)notifier_count_unread();
+		// Get amount of unread notifications
+		$count = (int)notifier_count_unread();
 
 		$text = '<span class="elgg-icon elgg-icon-attention"></span>';
 		$tooltip = elgg_echo("notifier:unreadcount", array($num_notifications));
 
-		if ($num_notifications != 0) {
-			$text .= "<span id=\"notifier-new\">$num_notifications</span>";
+		if ($count > 0) {
+			if ($count > 99) {
+				// Don't allow the counter to grow endlessly
+				$count = '99+';
+			}
+			$text .= "<span id=\"notifier-new\">$count</span>";
 		}
 
 		$item = ElggMenuItem::factory(array(
@@ -105,23 +113,86 @@ function notifier_page_handler ($page) {
 }
 
 /**
- * Dummy handler to enable notifier as a new notification method.
+ * Create a notification
  * 
- * The actual notifications are created by intercepting the notification
- * process with plugin hooks. This function is required because all
- * notification methods must have a callable handler function.
+ * @param string $hook   Hook name
+ * @param string $type   Hook type
+ * @param bool   $result Has the notification been sent
+ * @param array  $params Hook parameters
  */
-function notifier_notify_handler() {}
+function notifier_notification_send($hook, $type, $result, $params) {
+	$notification = $params['notification'];
+	$event = $params['event'];
+
+	if (!$event) {
+		// Plugin is calling notify_user() so stop here and let
+		// the NotificationService handle the notification later.
+		return false;
+	}
+
+	$ia = elgg_set_ignore_access(true);
+
+	$object = $event->getObject();
+	$recipient = $notification->getRecipient();
+	$actor = $event->getActor();
+	switch ($object->getType()) {
+		case 'annotation':
+			// Get the entity that was annotated
+			$entity = $object->getEntity();
+			break;
+		default:
+			// This covers all entities
+			$entity = $object;
+	}
+
+	// Check if similar notification already exists
+	$existing = notifier_get_similar($event->getDescription(), $entity, $recipient);
+	if ($existing) {
+		// Update the existing notification
+		$existing->setSubject($actor);
+		$existing->markUnread();
+		return $existing->save();
+	}
+
+	$string = "river:create:{$object->getType()}:{$object->getSubtype()}";
+
+	if ($string == elgg_echo($string)) {
+		// River string was not found so fall back to original summary string
+		$string = $notification->summary;
+	}
+
+	$note = new ElggNotification();
+	$note->title = $string;
+	$note->owner_guid = $recipient->getGUID();
+	$note->container_guid = $recipient->getGUID();
+	$note->event = $event->getDescription();
+
+	if ($note->save()) {
+		$note->setSubject($actor);
+		$note->setTarget($entity);
+	}
+
+	elgg_set_ignore_access($ia);
+
+	if ($note) {
+		return true;
+	}
+}
 
 /**
  * Get the count of all unread notifications
+ * 
+ * @return integer
  */
 function notifier_count_unread () {
 	return notifier_get_unread(array('count' => true));
 }
 
 /**
- * Get all unread messages
+ * Get all unread messages for logged in users
+ * 
+ * @param  array $options Options passed to elgg_get_entities_from_metadata
+ * @return ElggNotification[]|null
  */
 function notifier_get_unread ($options = array()) {
 	$defaults = array(
@@ -132,64 +203,12 @@ function notifier_get_unread ($options = array()) {
 		'metadata_name_value_pairs' => array(
 			'name' => 'status',
 			'value' => 'unread'
-		),
-		'order_by_metadata' => array(
-			'name' => 'status',
-			'direction' => DESC
-		),
+		)
 	);
 
 	$options = array_merge($defaults, $options);
 
 	return elgg_get_entities_from_metadata($options);
-}
-
-/**
- * Notify user about new content
- * 
- * This intercepts the notification process already before the call to
- * notify_user() is done. This is because we need more detailed info
- * than the notify_user() function can provide. After creating a new
- * notifier we can return false because there is no need to continue
- * to the notify_user() call.
- * 
- * @param string $hook    Hook name
- * @param string $type    Hook type
- * @param string $message Message body of the notification
- * @param array  $params  Parameters about the created entity
- * @return false|string
- */
-function notifier_object_notifications($hook, $type, $message, $params) {
-	// Create notification only if user has chosen it as notification method
-	if ($params['method'] === 'notifier') {
-		$entity = $params['entity'];
-		$to_entity = $params['to_entity'];
-
-		$type = $entity->getType();
-		$subtype = $entity->getSubtype();
-
-		// Do not notify about messages
-		if ($subtype == 'messages') {
-			return false;
-		}
-
-		// Use river string as the content of the notification
-		$title = "river:create:$type:$subtype";
-
-		notifier_add_notification(array(
-			'title' => $title,
-			'user_guid' => $to_entity->getGUID(),
-			'target_guid' => $entity->getGUID(),
-			'subject_guid' => $entity->getOwnerGUID()
-		));
-
-		notifier_handle_mentions($entity, 'object');
-
-		// Notification has been created. No need to continue.
-		return false;
-	}
-
-	return $message;
 }
 
 /**
@@ -270,8 +289,6 @@ function notifier_annotation_notifications($event, $type, $annotation) {
 	}
 
 	notifier_handle_mentions($annotation, 'annotation');
-
-	notifier_handle_comment_tracker($annotation);
 
 	notifier_handle_group_topic_replies($annotation);
 
@@ -361,57 +378,6 @@ function notifier_handle_mentions ($object, $type) {
 					));
 				}
 			}
-		}
-	}
-}
-
-/**
- * Create notifications for users tracking content with comment_tracker plugin.
- * 
- * @param object $annotation The annotation that was created
- */
-function notifier_handle_comment_tracker ($annotation) {
-	// This feature requires the comment_tracker plugin
-	if (!elgg_is_active_plugin('comment_tracker')) {
-		return false;
-	}
-
-	$options = array(
-		'relationship' => COMMENT_TRACKER_RELATIONSHIP,
-		'relationship_guid' => $annotation->entity_guid,
-		'inverse_relationship' => true,
-		'types' => 'user',
-		'limit' => 0
-	);
-
-	$users = elgg_get_entities_from_relationship($options);
-
-	foreach ($users as $user) {
-		// Make sure user is real
-		// Do not notify the author of comment
-		if ($user instanceof ElggUser && $user->guid != $annotation->owner_guid) {
-			if ($user->guid == $entity->owner_guid) {
-				// user is the owner of the entity being commented on
-				continue;
-			}
-
-			$site_guid = elgg_get_site_entity()->getGUID();
-			// comment_tracker doesn't keep track of used methods but blocked methods instead
-			if (check_entity_relationship($user->guid, 'block_comment_notifynotifier', $site_guid))	{
-				continue;
-			}
-
-			$target = get_entity($annotation->entity_guid);
-			$type = $target->getType();
-			$subtype = $target->getSubtype();
-			$title = "river:comment:$type:$subtype";
-
-			notifier_add_notification(array(
-				'title' => $title,
-				'user_guid' => $user->getGUID(),
-				'target_guid' => $target->getGUID(),
-				'subject_guid' => $annotation->owner_guid
-			));
 		}
 	}
 }
@@ -508,8 +474,8 @@ function notifier_add_notification ($options) {
 		$notification->title = $title;
 		$notification->owner_guid = $user_guid;
 		$notification->container_guid = $user_guid;
-		$notification->setSubjectGUID($subject_guid);
-		$notification->setTargetGUID($target_guid);
+		$notification->setSubject($subject);
+		$notification->setTarget($target_guid);
 		$notification->save();
 	}
 
@@ -518,8 +484,12 @@ function notifier_add_notification ($options) {
 
 /**
  * Remove over week old notifications that have been read
+ * 
+ * @param string $hook "cron"
+ * @param string $
+ * 
  */
-function notifier_cron ($hook, $entity_type, $returnvalue, $params) {
+function notifier_cron ($hook, $entity_type, $return, $params) {
 	// One week ago
 	$time = time() - 60 * 60 * 24 * 7;
 
@@ -557,7 +527,15 @@ function notifier_set_view_listener () {
 	$types = get_data("SELECT * FROM {$dbprefix}entity_subtypes");
 
 	// These subtypes do not have notifications so they can be skipped
-	$skip = array('plugin', 'widget', 'admin_notice', 'notification', 'messages', 'reported_content');
+	$skip = array(
+		'plugin',
+		'widget',
+		'admin_notice',
+		'notification',
+		'messages',
+		'reported_content',
+		'site_notification'
+	);
 
 	foreach ($types as $type) {
 		if (in_array($type->subtype, $skip)) {
@@ -569,73 +547,6 @@ function notifier_set_view_listener () {
 
 	// Some manual additions
 	elgg_extend_view('profile/wrapper', 'notifier/view_listener');
-}
-
-/**
- * Delete related notifications when notification subject or target is deleted
- * 
- * @param string   $event       The event type (delete)
- * @param string   $object_type The type of the object being deleted (object,
- * 								group, user, annotation, relationship, metadata)
- * @param stdClass $object      The object being deleted
- * @return boolean
- */
-function notifier_delete_event_listener ($event, $object_type, $object) {
-	// This currently supports only ElggEntities
-	if (!$object instanceof ElggEntity) {
-		return true;
-	}
-
-	// Notifications don't have notifications
-	if ($object->getSubtype() == 'notification') {
-		return true;
-	}
-
-	// Override access so we can delete notifications
-	// not belonging to currently logged in user
-	$ia = elgg_set_ignore_access(true);
-
-	switch ($object_type) {
-		case 'user':
-			// Notifications triggered by the user being deleted
-			$notifications = elgg_get_entities_from_metadata(array(
-				'type' => 'object',
-				'subtype' => 'notification',
-				'limit' => false,
-				'metadata_name_value_pairs' => array(
-					array(
-						'name' => 'subject_guid',
-						'value' => $object->getGUID()
-					)
-				)
-			));
-			break;
-		case 'object':
-			// Notifications which have the entity being deleted as their target
-			$notifications = elgg_get_entities_from_metadata(array(
-				'type' => 'object',
-				'subtype' => 'notification',
-				'limit' => false,
-				'metadata_name_value_pairs' => array(
-					array(
-						'name' => 'target_guid',
-						'value' => $object->getGUID()
-					)
-				)
-			));
-			break;
-		default:
-			// No notifications to delete
-			return true;
-	}
-
-	foreach ($notifications as $item) {
-		$item->delete();
-	}
-
-	elgg_set_ignore_access($ia);
-
-	return true;
 }
 
 /**
@@ -690,4 +601,80 @@ function notifier_enable_for_new_group_member ($event, $type, $params) {
 			add_entity_relationship($user->guid, 'notifynotifier', $group->guid);
 		}
 	}
+}
+
+/**
+ * Get existing notifications that match the given parameters.
+ * 
+ * This can be used when we want to update an old notification.
+ * E.g. "A likes X" and "B likes X" become "A and B like X".
+ * 
+ * @param  string                $event_name String like "action:type:subtype"
+ * @param  ElggEntity            $entity     Entity being notified about
+ * @param  ElggUser              $recipient  User being notified
+ * @return ElggNotification|null 
+ */
+function notifier_get_similar($event_name, $entity, $recipient) {
+	$db_prefix = elgg_get_config('dbprefix');
+	$ia = elgg_set_ignore_access(true);
+
+	// Notification (guid_one) has relationship 'hasObject' to target (guid_two)
+	$options = array(
+		'type' => 'object',
+		'subtype' => 'notification',
+		'owner_guid' => $recipient->guid,
+		'metadata_name_value_pairs' => array(
+			'name' => 'event',
+			'value' => $event_name,
+		),
+		'joins' => array(
+			"JOIN {$db_prefix}entity_relationships er ON e.guid = er.guid_one", // Object relationship
+		),
+		'wheres' => array(
+			"er.guid_two = {$entity->guid}",
+			"er.relationship = 'hasObject'", // TODO use constant
+		),
+	);
+
+	$notification = elgg_get_entities_from_metadata($options);
+
+	if ($notification) {
+		$notification = $notification[0];
+	}
+
+	elgg_set_ignore_access($ia);
+
+	return $notification;
+}
+
+/**
+ * Prepare a notification message about a new like
+ * 
+ * @param  string                          $hook         Hook name
+ * @param  string                          $type         Hook type
+ * @param  Elgg_Notifications_Notification $notification The notification to prepare
+ * @param  array                           $params       Hook parameters
+ * @return Elgg_Notifications_Notification
+ */
+function notifier_prepare_likes_notification($hook, $type, $notification, $params) {
+	$annotation = $params['event']->getObject();
+	$entity = $annotation->getEntity();
+	$owner = $params['event']->getActor();
+	$recipient = $params['recipient'];
+	$language = $params['language'];
+	$method = $params['method'];
+	$site = elgg_get_site_entity();
+
+	$notification->subject = elgg_echo('likes:notifications:subject', array($entity->title), $language); 
+	$notification->body = elgg_echo('likes:notifications:body', array(
+		$recipient->name,
+		$owner->name,
+		$entity->title,
+		$site->name,
+		$entity->getURL(),
+		$owner->getURL(),
+	), $language);
+	$notification->summary = 'likes:notifications:summary';
+
+	return $notification;
 }
