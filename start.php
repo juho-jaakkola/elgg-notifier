@@ -8,8 +8,6 @@
 elgg_register_event_handler('init', 'system', 'notifier_init');
 
 function notifier_init () {
-	elgg_register_library('elgg:notifier', elgg_get_plugins_path() . 'notifier/lib/notifier.php');
-
 	notifier_set_view_listener();
 
 	// Add hidden popup module to topbar
@@ -39,6 +37,10 @@ function notifier_init () {
 	// Notifications for likes
 	elgg_register_notification_event('annotation', 'likes', array('create'));
 	elgg_register_plugin_hook_handler('prepare', 'notification:create:annotation:likes', 'notifier_prepare_likes_notification');
+	// Notifications about new friends
+	elgg_register_notification_event('relationship', 'friend', array('create'));
+	elgg_register_plugin_hook_handler('prepare', 'notification:create:relationship:friend', 'notifier_prepare_friend_notification');
+	elgg_register_plugin_hook_handler('route', 'friendsof', 'notifier_read_friends_notification');
 
 	// Hook handler for cron that removes old messages
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
@@ -96,18 +98,34 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 }
 
 /**
- * Displays a list of all notifications
+ * Dispatches notifier pages
+ * 
+ * URLs take the form of
+ *  All notifications:          notifier/all
+ *  Subjects of a notification: notifier/subjects/<notification guid>
+ * 
+ * @param  array $page
+ * @return bool
  */
 function notifier_page_handler ($page) {
 	gatekeeper();
 
-	elgg_load_library('elgg:notifier');
+	if (empty($page[0])) {
+		$page[0] = 'all';
+	}
 
-	$params = notifier_get_page_content_list();
+	$path = elgg_get_plugins_path() . 'notifier/pages/notifier/';
 
-	$body = elgg_view_layout('content', $params);
-
-	echo elgg_view_page($params['title'], $body);
+	switch ($page[0]) {
+		case 'subjects':
+			set_input('guid', $page[1]);
+			include_once($path . 'subjects.php');
+			break;
+		case 'all':
+		default:
+			include_once($path . 'list.php');
+			break;
+	}
 
 	return true;
 }
@@ -140,18 +158,25 @@ function notifier_notification_send($hook, $type, $result, $params) {
 			// Get the entity that was annotated
 			$entity = $object->getEntity();
 			break;
+		case 'relationship':
+			$entity = get_entity($object->guid_two);
+			break;
 		default:
 			// This covers all entities
 			$entity = $object;
 	}
 
-	// Check if similar notification already exists
-	$existing = notifier_get_similar($event->getDescription(), $entity, $recipient);
-	if ($existing) {
-		// Update the existing notification
-		$existing->setSubject($actor);
-		$existing->markUnread();
-		return $existing->save();
+	if ($object->getType() == 'annotation' || $object->getType() == 'relationship') {
+		// Check if similar notification already exists
+		$existing = notifier_get_similar($event->getDescription(), $entity, $recipient);
+		if ($existing) {
+			// Update the existing notification
+			$existing->setSubject($actor);
+			$existing->markUnread();
+			return $existing->save();
+
+			// TODO Update time_created?
+		}
 	}
 
 	$string = "river:create:{$object->getType()}:{$object->getSubtype()}";
@@ -677,4 +702,54 @@ function notifier_prepare_likes_notification($hook, $type, $notification, $param
 	$notification->summary = 'likes:notifications:summary';
 
 	return $notification;
+}
+
+/**
+ * Prepare notification message about a new friend
+ * 
+ * @param  string                          $hook         Hook name
+ * @param  string                          $type         Hook type
+ * @param  Elgg_Notifications_Notification $notification The notification to prepare
+ * @param  array                           $params       Hook parameters
+ * @return Elgg_Notifications_Notification
+ */
+function notifier_prepare_friend_notification($hook, $type, $notification, $params) {
+	$relationship = $params['event']->getObject();
+	$actor = $params['event']->getActor();
+	$language = $params['language'];
+
+	$notification->subject = elgg_echo('friend:newfriend:subject', array($actor->name), $language); 
+	$notification->body = elgg_echo('friend:newfriend:body', array(
+		$actor->name,
+		$actor->getURL(),
+	), $language);
+	$notification->summary = 'friend:notifications:summary';
+
+	return $notification;
+}
+
+/**
+ * Mark unread friend notifications as read.
+ * 
+ * This hook is triggered when user goes to the "friendsof/<username>" page.
+ * 
+ * @param string $hook
+ * @param string $type
+ * @param array  $return
+ * @param array  $params
+ */
+function notifier_read_friends_notification ($hook, $type, $return, $params) {
+	// Get unread notifications that match the friending event
+	$options = array(
+		'metadata_name_value_pairs' => array(
+			'name' => 'event',
+			'value' => 'create:relationship:friend',
+		)
+	);
+
+	$notifications = notifier_get_unread($options);
+
+	foreach ($notifications as $note) {
+		$note->markRead();
+	}
 }

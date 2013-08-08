@@ -46,7 +46,11 @@ $event_view = str_replace(':', '/', $notification->event);
 $view = "notifier/messages/$event_view";
 
 if (count($subjects) > 1 && elgg_view_exists($view)) {
-	$subtitle = elgg_view($view, array('subjects' => $subjects, 'target_link' => $target_link));
+	// Use special view for this notification type
+	$subtitle = elgg_view($view, array(
+		'entity' => $notification,
+		'target_link' => $target_link
+	));
 } else {
 	$subject_link = elgg_view('output/url', array(
 		'href' => $subject->getURL(),

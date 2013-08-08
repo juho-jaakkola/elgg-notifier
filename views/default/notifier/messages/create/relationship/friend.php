@@ -1,6 +1,6 @@
 <?php
 /**
- * Display multiple likes as one notification message
+ * Display multiple new friend notifications as one
  */
 
 $notification = $vars['entity'];
@@ -23,24 +23,18 @@ if ($subject_count == 2) {
 		'is_trusted' => true,
 	));
 
-	$subtitle = elgg_echo('likes:notifications:summary:2', array($subject_link, $subject2_link, $target_link));
+	$subtitle = elgg_echo('friend:notifications:summary:2', array($subject_link, $subject2_link, $target_link));
 } else {
 	$subjects = elgg_echo('notifier:multiple_subjects', array($subject->name, $subject_count));
 
-	// Full list of notification subject will be opened in a lightbox
-	// TODO By default popup is on top of lightbox so should popup be used instead?
-	elgg_load_js('lightbox');
-	elgg_load_css('lightbox');
-
-	$guid = $notification->getGUID();
+	$username = elgg_get_logged_in_user_entity()->username;
 	$subjects_link = elgg_view('output/url', array(
-		'href' => "notifier/subjects/$guid",
+		'href' => "friendsof/{$username}",
 		'text' => $subjects,
 		'is_trusted' => true,
-		'class' => 'elgg-lightbox',
 	));
 
-	$subtitle = elgg_echo('likes:notifications:summary:n', array($subjects_link, $target_link));
+	$subtitle = elgg_echo('friend:notifications:summary:n', array($subjects_link));
 }
 
 echo $subtitle;

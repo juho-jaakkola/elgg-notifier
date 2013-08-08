@@ -36,7 +36,7 @@
 	background: #EDF5FF;
 }
 
-/* count of unread notifications in topbar icon */
+/* Count of unread notifications in topbar icon */
 #notifier-new {
 	color: white;
 	background-color: red;
@@ -57,4 +57,11 @@
 	height: 16px;
 	font-size: 10px;
 	font-weight: bold;
+}
+
+/* Lightbox */
+.notifier-lightbox-wrapper {
+	width: 570px;
+	min-height: 410px;
+	margin: 20px 15px;
 }

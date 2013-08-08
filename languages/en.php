@@ -28,10 +28,18 @@ $lang = array(
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s replied on the discussion topic %s',
 
+	// This is used to create messages like "Lisa and 5 others like your post"
+	'notifier:multiple_subjects' => '%s and %s other users',
+
 	// Likes plugin
 	'likes:notifications:summary' => '%s likes your post %s',
 	'likes:notifications:summary:2' => '%s and %s like your post %s',
-	'likes:notifications:summary:n' => '%s and %s other users like your post %s',
+	'likes:notifications:summary:n' => '%s like your post %s',
+
+	// Friends
+	'friend:notifications:summary' => '%s has made you a friend',
+	'friend:notifications:summary:2' => '%s and %s have made you a friend',
+	'friend:notifications:summary:n' => '%s have made you a friend',
 
 	// Plugin settings
 	'notifier:settings:desc' => 'Default notification settings for new users',
