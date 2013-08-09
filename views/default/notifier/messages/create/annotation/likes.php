@@ -29,8 +29,6 @@ if ($subject_count == 2) {
 
 	// Full list of notification subject will be opened in a lightbox
 	// TODO By default popup is on top of lightbox so should popup be used instead?
-	elgg_load_js('lightbox');
-	elgg_load_css('lightbox');
 
 	$guid = $notification->getGUID();
 	$subjects_link = elgg_view('output/url', array(

@@ -54,9 +54,17 @@ elgg.notifier.popup = function(e) {
 		success: function(output) {
 			$('#notifier-popup .elgg-body').html(output);
 
+			// Check if there are unread notifications
 			$('.elgg-notifier-unread').each(function() {
 				// Found an unread notification so display the "Dismiss all" icon
 				$('#notifier-dismiss-all').removeClass('hidden');
+				return false
+			});
+
+			// Check if there are links that trigger a lightbox
+			$('#notifier-popup .elgg-lightbox').each(function() {
+				// Bind lightbox to the new links
+				elgg.ui.lightbox.bind($(".elgg-lightbox"));
 				return false
 			});
 		}

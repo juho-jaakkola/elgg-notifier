@@ -11,7 +11,6 @@ function notifier_init () {
 	notifier_set_view_listener();
 
 	// Add hidden popup module to topbar
-	// TODO Add an empty module that is populated on demand (using XHR)
 	elgg_extend_view('page/elements/topbar', 'notifier/popup');
 
 	// Register the notifier's JavaScript
@@ -24,6 +23,10 @@ function notifier_init () {
 	$notifier_admin_js = elgg_get_simplecache_url('js', 'notifier/admin');
 	elgg_register_simplecache_view('js/notifier/admin');
 	elgg_register_js('elgg.notifier.admin', $notifier_admin_js);
+
+	// Must always have lightbox loaded because views needing it come via AJAX
+	elgg_load_js('lightbox');
+	elgg_load_css('lightbox');
 
 	elgg_register_page_handler('notifier', 'notifier_page_handler');
 
