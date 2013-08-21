@@ -10,6 +10,11 @@ $notification = $vars['entity'];
 $target = $notification->getTarget();
 $subjects = $notification->getSubjects();
 
+// TODO Find a way to get rid of this subtype specific code
+if (elgg_instanceof($target, 'object', 'comment')) {
+	$target = $target->getContainerEntity();
+}
+
 if (!$target || empty($subjects)) {
 	// Add admin notice to help trace the reason of invalid notifications
 	$title = $notification->title;
