@@ -11,4 +11,8 @@
 		<type>elgg_release</type>
 		<version>1.9</version>
 	</requires>
+	<requires>
+		<type>plugin</type>
+		<name>notifications</name>
+	</requires>
 </plugin_manifest>
