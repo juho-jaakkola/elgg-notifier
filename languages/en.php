@@ -29,14 +29,15 @@ $lang = array(
 	'river:comment:object:groupforumtopic' => '%s replied on the discussion topic %s',
 
 	// Admin panel
+	'notifier:settings:warning' => "<strong>Warning!</strong> Having notifier enabled for many users may result in a lot of writes to the database. Therefore it doesn't scale well for large sites.",
 	'notifier:settings:desc' => 'Default notification settings for new users',
 	'notifier:settings:enable_personal' => 'Personal notifications',
 	'notifier:settings:enable_personal:desc' => "A notification is added when an action (comment, like, etc.) is performed on user's content.",
 	'notifier:settings:enable_collections' => 'Friends',
-	'notifier:settings:enable_collections:desc' => "A notification is added when user's friend creates new content.",
+	'notifier:settings:enable_collections:desc' => "A notification is added when any of user's friends create new content.",
 	'notifier:settings:groups:desc' => 'Default notification setting for new group members',
 	'notifier:settings:enable_groups' => 'Group notifications',
-	'notifier:settings:enable_groups:desc' => 'A notification is added when new content is added to a group that the user is a member of.',
+	'notifier:settings:enable_groups:desc' => 'A notification is added when new content is created to a group where user has a membership.',
 );
 
 add_translation('en', $lang);

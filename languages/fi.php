@@ -29,6 +29,7 @@ $lang = array(
 	'river:comment:object:groupforumtopic' => '%s vastasi keskusteluun %s',
 
 	// Admin panel
+	'notifier:settings:warning' => "<strong>Varoitus!</strong> Ilmoitusten käyttäminen saattaa aiheuttaa paljon tallennuksia tietokantaan. Tästä syystä toiminto ei sovi sivustoille, joissa on paljon käyttäjiä.",
 	'notifier:settings:desc' => 'Oletusasetukset uusille käyttäjille',
 	'notifier:settings:enable_personal' => 'Henkilökohtaiset ilmoitukset',
 	'notifier:settings:enable_personal:desc' => 'Käyttäjä saa ilmoituksen, kun joku suorittaa toiminnon (tykkäys, kommentointi, tms) hänen luomalleen sisällölle.',
@@ -36,7 +37,7 @@ $lang = array(
 	'notifier:settings:enable_collections:desc' => 'Käyttäjä saa ilmoituksen, kun joku hänen ystävistään luo uutta sisältöä.',
 	'notifier:settings:groups:desc' => 'Oletusasetukset ryhmien uusille jäsenille',
 	'notifier:settings:enable_groups' => 'Ryhmien ilmoitukset',
-	'notifier:settings:enable_groups:desc' => 'Käyttäjä saa ilmoituksen, kun joku lisää uutta sisältöä ryhmään, jossa hän on jäsenenä.',
+	'notifier:settings:enable_groups:desc' => 'Käyttäjä saa ilmoituksen, kun joku lisää uutta sisältöä ryhmään, jossa käyttäjä on jäsenenä.',
 );
 
 add_translation('fi', $lang);

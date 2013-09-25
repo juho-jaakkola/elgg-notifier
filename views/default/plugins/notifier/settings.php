@@ -1,5 +1,7 @@
 <?php
 
+$settings_warning = elgg_echo('notifier:settings:warning');
+
 $personal_settings_desc = elgg_echo('notifier:settings:desc');
 
 // Settings for personal notifications
@@ -40,6 +42,7 @@ if ($vars['entity']->enable_groups) {
 $groups_input = elgg_view('input/checkbox', $groups_options);
 
 echo <<<HTML
+	<p>$settings_warning</p>
 	<br />
 	<h3>$personal_settings_desc</h3>
 	<hr />
