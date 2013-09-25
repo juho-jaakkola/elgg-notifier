@@ -1,3 +1,12 @@
+Version 1.8.5 (2013-09-25):
+
+ Enhancements:
+  * Admin can set notifier enabled by default for new users and new group members
+
+ Bugfixes:
+  * Prevents false comment_tracker notifications being sent when liking content
+
+
 Version 1.8.4 (2013-05-13):
 
  Bugfixes:
