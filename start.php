@@ -367,6 +367,10 @@ function notifier_handle_comment_tracker ($annotation) {
 		return false;
 	}
 
+	if ($annotation->name != 'generic_comment') {
+		return false;
+	}
+
 	$options = array(
 		'relationship' => COMMENT_TRACKER_RELATIONSHIP,
 		'relationship_guid' => $annotation->entity_guid,
