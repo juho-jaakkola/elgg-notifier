@@ -15,6 +15,7 @@ elgg.ui.notifierPopupHandler = function(hook, type, params, options) {
 	if (params.target.hasClass('elgg-notifier-popup')) {
 		options.my = 'left top';
 		options.at = 'left bottom';
+		options.collision = 'fit none';
 		return options;
 	}
 	return null;
