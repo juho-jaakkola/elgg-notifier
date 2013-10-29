@@ -19,11 +19,6 @@ function notifier_init () {
 	elgg_register_js('elgg.notifier', $notifier_js);
 	elgg_load_js('elgg.notifier');
 
-	// Register the notifier's admin JavaScript
-	$notifier_admin_js = elgg_get_simplecache_url('js', 'notifier/admin');
-	elgg_register_simplecache_view('js/notifier/admin');
-	elgg_register_js('elgg.notifier.admin', $notifier_admin_js);
-
 	// Must always have lightbox loaded because views needing it come via AJAX
 	elgg_load_js('lightbox');
 	elgg_load_css('lightbox');
@@ -32,7 +27,6 @@ function notifier_init () {
 
 	// Add css
 	elgg_extend_view('css/elgg', 'notifier/css');
-	elgg_extend_view('css/admin', 'notifier/admin/css');
 
 	elgg_register_notification_method('notifier');
 	elgg_register_plugin_hook_handler('send', 'notification:notifier', 'notifier_notification_send');
@@ -58,9 +52,6 @@ function notifier_init () {
 	elgg_register_action('notifier/dismiss', $action_path . 'dismiss.php');
 	elgg_register_action('notifier/clear', $action_path . 'clear.php');
 	elgg_register_action('notifier/delete', $action_path . 'delete.php');
-	elgg_register_action('notifier/admin/enable_personal', $action_path . 'admin/enable_personal.php', 'admin');
-	elgg_register_action('notifier/admin/enable_collections', $action_path . 'admin/enable_collections.php', 'admin');
-	elgg_register_action('notifier/admin/enable_groups', $action_path . 'admin/enable_groups.php', 'admin');
 }
 
 /**

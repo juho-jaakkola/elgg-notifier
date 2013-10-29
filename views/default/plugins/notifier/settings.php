@@ -39,17 +39,7 @@ if ($vars['entity']->enable_groups) {
 }
 $groups_input = elgg_view('input/checkbox', $groups_options);
 
-$enable_link = elgg_view('output/url', array(
-	'href' => 'admin/notifier/enable',
-	'text' => elgg_echo('notifier:admin:enable:description_link'),
-));
-$enable_description = elgg_echo('notifier:admin:enable:description', array($enable_link));
-
-$warning = elgg_echo('notifier:admin:enable:warning');
-
 echo <<<HTML
-	<p>$enable_description</p>
-	<p>$warning</p>
 	<br />
 	<h3>$personal_settings_desc</h3>
 	<hr />
