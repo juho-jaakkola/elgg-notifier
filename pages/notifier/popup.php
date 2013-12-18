@@ -9,7 +9,7 @@ $notifications = elgg_get_entities_from_metadata(array(
 	'owner_guid' => elgg_get_logged_in_user_guid(),
 	'order_by_metadata' => array(
 		'name' => 'status',
-		'direction' => DESC
+		'direction' => 'DESC'
 	),
 ));
 
