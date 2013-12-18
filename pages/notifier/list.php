@@ -43,13 +43,13 @@ $notifications = elgg_list_entities_from_metadata(array(
 	'full_view' => false,
 	'order_by_metadata' => array(
 		'name' => 'status',
-		'direction' => DESC
+		'direction' => 'DESC'
 	),
 ));
 
 if ($notifications) {
 	$params['content'] = $notifications;
-} else { 
+} else {
 	$params['content'] = elgg_echo('notifier:none');
 }
 
