@@ -22,4 +22,4 @@ $vars = array(
 	'header' => $header
 );
 
-echo elgg_view_module('popup', '', $body, $vars);
+echo elgg_view_module('popup', '', '', $vars);
