@@ -65,7 +65,7 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 		$count = (int)notifier_count_unread();
 
 		$text = '<span class="elgg-icon elgg-icon-attention"></span>';
-		$tooltip = elgg_echo("notifier:unreadcount", array($num_notifications));
+		$tooltip = elgg_echo("notifier:unreadcount", array($count));
 
 		if ($count > 0) {
 			if ($count > 99) {
