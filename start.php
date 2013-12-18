@@ -1,7 +1,7 @@
 <?php
 /**
  * Notifier
- * 
+ *
  * @package Notifier
  */
 
@@ -56,7 +56,7 @@ function notifier_init () {
 
 /**
  * Add notifier icon to topbar menu
- * 
+ *
  * The menu item opens a popup module defined in view notifier/popup
  */
 function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
@@ -93,11 +93,11 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 
 /**
  * Dispatches notifier pages
- * 
+ *
  * URLs take the form of
  *  All notifications:          notifier/all
  *  Subjects of a notification: notifier/subjects/<notification guid>
- * 
+ *
  * @param  array $page
  * @return bool
  */
@@ -129,7 +129,7 @@ function notifier_page_handler ($page) {
 
 /**
  * Create a notification
- * 
+ *
  * @param string $hook   Hook name
  * @param string $type   Hook type
  * @param bool   $result Has the notification been sent
@@ -203,7 +203,7 @@ function notifier_notification_send($hook, $type, $result, $params) {
 
 /**
  * Get the count of all unread notifications
- * 
+ *
  * @return integer
  */
 function notifier_count_unread () {
@@ -212,7 +212,7 @@ function notifier_count_unread () {
 
 /**
  * Get all unread messages for logged in users
- * 
+ *
  * @param  array $options Options passed to elgg_get_entities_from_metadata
  * @return ElggNotification[]|null
  */
@@ -319,7 +319,7 @@ function notifier_annotation_notifications($event, $type, $annotation) {
 
 /**
  * Create a notification for each @username tag
- * 
+ *
  * @param object $object The content that was created
  * @param string $type   Type of content (annotation|object)
  */
@@ -406,10 +406,10 @@ function notifier_handle_mentions ($object, $type) {
 
 /**
  * Create notifications of group discussion replies.
- * 
+ *
  * Notify all group members who have subscribed to group notifications
  * using notifier as a notification method.
- * 
+ *
  * @param object $reply The reply that was posted
  */
 function notifier_handle_group_topic_replies ($reply) {
@@ -451,7 +451,7 @@ function notifier_handle_group_topic_replies ($reply) {
 
 /**
  * Add a new notification if similar not already exists
- * 
+ *
  * @uses int $options['user_guid']    GUID of the user being notified
  * @uses int $options['target_guid']  GUID of the entity being acted on
  * @uses int $options['subject_guid'] GUID of the user acting on target
@@ -506,10 +506,10 @@ function notifier_add_notification ($options) {
 
 /**
  * Remove over week old notifications that have been read
- * 
+ *
  * @param string $hook "cron"
  * @param string $
- * 
+ *
  */
 function notifier_cron ($hook, $entity_type, $return, $params) {
 	// One week ago
@@ -573,10 +573,10 @@ function notifier_set_view_listener () {
 
 /**
  * Enable notifier by default for new users according to plugin settings.
- * 
+ *
  * We do this using 'create, user' event instead of 'register, user' plugin
  * hook so that it affects also users created by an admin.
- * 
+ *
  * @param  string   $event 'create'
  * @param  string   $type  'user'
  * @param  ElggUser $user
@@ -607,7 +607,7 @@ function notifier_enable_for_new_user ($event, $type, $user) {
 
 /**
  * Enable notifier as notification method when joining a group.
- * 
+ *
  * @param string $event  'join'
  * @param string $type   'group'
  * @param array  $params Array containing ElggUser and ElggGroup
@@ -627,14 +627,14 @@ function notifier_enable_for_new_group_member ($event, $type, $params) {
 
 /**
  * Get existing notifications that match the given parameters.
- * 
+ *
  * This can be used when we want to update an old notification.
  * E.g. "A likes X" and "B likes X" become "A and B like X".
- * 
+ *
  * @param  string                $event_name String like "action:type:subtype"
  * @param  ElggEntity            $entity     Entity being notified about
  * @param  ElggUser              $recipient  User being notified
- * @return ElggNotification|null 
+ * @return ElggNotification|null
  */
 function notifier_get_similar($event_name, $entity, $recipient) {
 	$db_prefix = elgg_get_config('dbprefix');
@@ -671,7 +671,7 @@ function notifier_get_similar($event_name, $entity, $recipient) {
 
 /**
  * Prepare a notification message about a new like
- * 
+ *
  * @param  string                          $hook         Hook name
  * @param  string                          $type         Hook type
  * @param  Elgg_Notifications_Notification $notification The notification to prepare
@@ -687,7 +687,7 @@ function notifier_prepare_likes_notification($hook, $type, $notification, $param
 	$method = $params['method'];
 	$site = elgg_get_site_entity();
 
-	$notification->subject = elgg_echo('likes:notifications:subject', array($entity->title), $language); 
+	$notification->subject = elgg_echo('likes:notifications:subject', array($entity->title), $language);
 	$notification->body = elgg_echo('likes:notifications:body', array(
 		$recipient->name,
 		$owner->name,
@@ -703,7 +703,7 @@ function notifier_prepare_likes_notification($hook, $type, $notification, $param
 
 /**
  * Prepare notification message about a new friend
- * 
+ *
  * @param  string                          $hook         Hook name
  * @param  string                          $type         Hook type
  * @param  Elgg_Notifications_Notification $notification The notification to prepare
@@ -715,7 +715,7 @@ function notifier_prepare_friend_notification($hook, $type, $notification, $para
 	$actor = $params['event']->getActor();
 	$language = $params['language'];
 
-	$notification->subject = elgg_echo('friend:newfriend:subject', array($actor->name), $language); 
+	$notification->subject = elgg_echo('friend:newfriend:subject', array($actor->name), $language);
 	$notification->body = elgg_echo('friend:newfriend:body', array(
 		$actor->name,
 		$actor->getURL(),
@@ -727,9 +727,9 @@ function notifier_prepare_friend_notification($hook, $type, $notification, $para
 
 /**
  * Mark unread friend notifications as read.
- * 
+ *
  * This hook is triggered when user goes to the "friendsof/<username>" page.
- * 
+ *
  * @param string $hook
  * @param string $type
  * @param array  $return
