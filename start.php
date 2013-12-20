@@ -185,8 +185,8 @@ function notifier_notification_send($hook, $type, $result, $params) {
 
 	$string = "river:create:{$object->getType()}:{$object->getSubtype()}";
 
-	if ($string == elgg_echo($string)) {
-		// River string was not found so fall back to original summary string
+	// Use summary string if river string is not available
+	if ($string == elgg_echo($string) && !empty($notification->summary)) {
 		$string = $notification->summary;
 	}
 
