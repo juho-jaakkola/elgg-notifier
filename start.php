@@ -159,11 +159,18 @@ function notifier_notification_send($hook, $type, $result, $params) {
 			$entity = get_entity($object->guid_two);
 			break;
 		default:
-			// This covers all entities
-			$entity = $object;
+			if ($object instanceof ElggComment) {
+				// Use comment's container as notification target
+				$entity = $object->getContainerEntity();
+
+				// TODO How about discussion replies?
+			} else {
+				// This covers all other entities
+				$entity = $object;
+			}
 	}
 
-	if ($object->getType() == 'annotation' || $object->getType() == 'relationship') {
+	if ($object->getType() == 'annotation' || $object->getType() == 'relationship' || $object instanceof ElggComment) {
 		// Check if similar notification already exists
 		$existing = notifier_get_similar($event->getDescription(), $entity, $recipient);
 		if ($existing) {

@@ -41,6 +41,11 @@ $lang = array(
 	'friend:notifications:summary:2' => '%s ja %s lisäsivät sinut ystäväkseen',
 	'friend:notifications:summary:n' => '%s lisäsivät sinut ystäväkseen',
 
+	// Comments
+	'comment:notifications:summary' => '%s kommentoi kohdetta %s',
+	'comment:notifications:summary:2' => '%s ja %s kommentoivat kohdetta %s',
+	'comment:notifications:summary:n' => '%s kommentoivat kohdetta %s',
+
 	// Plugin settings
 	'notifier:settings:desc' => 'Oletusasetukset uusille käyttäjille',
 	'notifier:settings:enable_personal' => 'Henkilökohtaiset ilmoitukset',

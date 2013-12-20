@@ -41,6 +41,11 @@ $lang = array(
 	'friend:notifications:summary:2' => '%s and %s have made you a friend',
 	'friend:notifications:summary:n' => '%s have made you a friend',
 
+	// Comments
+	'comment:notifications:summary' => '%s commented %s',
+	'comment:notifications:summary:2' => '%s and %s commented %s',
+	'comment:notifications:summary:n' => '%s commented %s',
+
 	// Plugin settings
 	'notifier:settings:desc' => 'Default notification settings for new users',
 	'notifier:settings:enable_personal' => 'Personal notifications',
