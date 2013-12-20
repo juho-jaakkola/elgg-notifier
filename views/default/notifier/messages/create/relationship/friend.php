@@ -25,6 +25,8 @@ if ($subject_count == 2) {
 
 	$subtitle = elgg_echo('friend:notifications:summary:2', array($subject_link, $subject2_link, $target_link));
 } else {
+	// One of the users is mentioned by name so remove that user from the count
+	$subject_count--;
 	$subjects = elgg_echo('notifier:multiple_subjects', array($subject->name, $subject_count));
 
 	$username = elgg_get_logged_in_user_entity()->username;
