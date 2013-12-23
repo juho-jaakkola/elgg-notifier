@@ -177,9 +177,11 @@ function notifier_notification_send($hook, $type, $result, $params) {
 			// Update the existing notification
 			$existing->setSubject($actor);
 			$existing->markUnread();
+			// time_created must be used because time_updated gets updated
+			// automatically and it won't therefore match the time_created
+			// of the object triggering the notification
+			$existing->time_created = $object->time_created;
 			return $existing->save();
-
-			// TODO Update time_created?
 		}
 	}
 
@@ -195,6 +197,9 @@ function notifier_notification_send($hook, $type, $result, $params) {
 	$note->owner_guid = $recipient->getGUID();
 	$note->container_guid = $recipient->getGUID();
 	$note->event = $event->getDescription();
+	// The notification may be being created later than the event took
+	// place, so use the original time_created instead of time()
+	$note->time_created = $object->time_created;
 
 	if ($note->save()) {
 		$note->setSubject($actor);
