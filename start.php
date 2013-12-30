@@ -621,6 +621,7 @@ function notifier_delete_event_listener ($event, $object_type, $object) {
 			break;
 		default:
 			// No notifications to delete
+			elgg_set_ignore_access($ia);
 			return true;
 	}
 
