@@ -1,7 +1,7 @@
 <?php
 /**
  * Notifier
- * 
+ *
  * @package Notifier
  */
 
@@ -47,7 +47,7 @@ function notifier_init () {
 
 /**
  * Add notifier icon to topbar menu
- * 
+ *
  * The menu item opens a popup module defined in view notifier/popup
  */
 function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
@@ -97,7 +97,7 @@ function notifier_page_handler ($page) {
 
 /**
  * Dummy handler to enable notifier as a new notification method.
- * 
+ *
  * The actual notifications are created by intercepting the notification
  * process with plugin hooks. This function is required because all
  * notification methods must have a callable handler function.
@@ -137,13 +137,13 @@ function notifier_get_unread ($options = array()) {
 
 /**
  * Notify user about new content
- * 
+ *
  * This intercepts the notification process already before the call to
  * notify_user() is done. This is because we need more detailed info
  * than the notify_user() function can provide. After creating a new
  * notifier we can return false because there is no need to continue
  * to the notify_user() call.
- * 
+ *
  * @param string $hook    Hook name
  * @param string $type    Hook type
  * @param string $message Message body of the notification
@@ -271,7 +271,7 @@ function notifier_annotation_notifications($event, $type, $annotation) {
 
 /**
  * Create a notification for each @username tag
- * 
+ *
  * @param object $object The content that was created
  * @param string $type   Type of content (annotation|object)
  */
@@ -358,7 +358,7 @@ function notifier_handle_mentions ($object, $type) {
 
 /**
  * Create notifications for users tracking content with comment_tracker plugin.
- * 
+ *
  * @param object $annotation The annotation that was created
  */
 function notifier_handle_comment_tracker ($annotation) {
@@ -413,10 +413,10 @@ function notifier_handle_comment_tracker ($annotation) {
 
 /**
  * Create notifications of group discussion replies.
- * 
+ *
  * Notify all group members who have subscribed to group notifications
  * using notifier as a notification method.
- * 
+ *
  * @param object $reply The reply that was posted
  */
 function notifier_handle_group_topic_replies ($reply) {
@@ -458,7 +458,7 @@ function notifier_handle_group_topic_replies ($reply) {
 
 /**
  * Add a new notification if similar not already exists
- * 
+ *
  * @uses int $options['user_guid']    GUID of the user being notified
  * @uses int $options['target_guid']  GUID of the entity being acted on
  * @uses int $options['subject_guid'] GUID of the user acting on target
@@ -568,7 +568,7 @@ function notifier_set_view_listener () {
 
 /**
  * Delete related notifications when notification subject or target is deleted
- * 
+ *
  * @param string   $event       The event type (delete)
  * @param string   $object_type The type of the object being deleted (object,
  * 								group, user, annotation, relationship, metadata)
@@ -635,10 +635,10 @@ function notifier_delete_event_listener ($event, $object_type, $object) {
 
 /**
  * Enable notifier by default for new users according to plugin settings.
- * 
+ *
  * We do this using 'create, user' event instead of 'register, user' plugin
  * hook so that it affects also users created by an admin.
- * 
+ *
  * @param  string   $event 'create'
  * @param  string   $type  'user'
  * @param  ElggUser $user
@@ -669,7 +669,7 @@ function notifier_enable_for_new_user ($event, $type, $user) {
 
 /**
  * Enable notifier as notification method when joining a group.
- * 
+ *
  * @param string $event  'join'
  * @param string $type   'group'
  * @param array  $params Array containing ElggUser and ElggGroup
