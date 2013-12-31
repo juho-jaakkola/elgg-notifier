@@ -15,6 +15,8 @@ $subject_link = elgg_view('output/url', array(
 	'is_trusted' => true,
 ));
 
+$target = $notification->getTarget();
+
 if ($subject_count == 2) {
 	$subject2 = $subjects[1];
 	$subject2_link = elgg_view('output/url', array(
@@ -23,21 +25,21 @@ if ($subject_count == 2) {
 		'is_trusted' => true,
 	));
 
-	$subtitle = elgg_echo('comment:notifications:summary:2', array($subject_link, $subject2_link, $target_link));
+	$subjects_string = elgg_echo('notifier:two_subjects', array($subject_link, $subject2_link));
 } else {
 	// One of the users is mentioned by name so remove that user from the count
 	$subject_count--;
 	$subjects = elgg_echo('notifier:multiple_subjects', array($subject->name, $subject_count));
 
 	$guid = $notification->getGUID();
-	$subjects_link = elgg_view('output/url', array(
+	$subjects_string = elgg_view('output/url', array(
 		'href' => "notifier/subjects/$guid",
 		'text' => $subjects,
 		'is_trusted' => true,
 		'class' => 'elgg-lightbox',
 	));
-
-	$subtitle = elgg_echo('comment:notifications:summary:n', array($subjects_link, $target_link));
 }
+
+$subtitle = elgg_echo($notification->title, array($subjects_string, $target_link));
 
 echo $subtitle;

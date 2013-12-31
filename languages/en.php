@@ -28,6 +28,8 @@ $lang = array(
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s replied on the discussion topic %s',
 
+	// This is used to create messages like "Lisa and George like your post"
+	'notifier:two_subjects' => '%s and %s',
 	// This is used to create messages like "Lisa and 5 others like your post"
 	'notifier:multiple_subjects' => '%s and %s other users',
 
