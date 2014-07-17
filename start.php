@@ -147,8 +147,9 @@ function notifier_notification_send($hook, $type, $result, $params) {
 
 	$ia = elgg_set_ignore_access(true);
 
+	$action = $event->getAction();
 	$object = $event->getObject();
-	$string = "river:create:{$object->getType()}:{$object->getSubtype()}";
+	$string = "river:{$action}:{$object->getType()}:{$object->getSubtype()}";
 	$recipient = $notification->getRecipient();
 	$actor = $event->getActor();
 	switch ($object->getType()) {
