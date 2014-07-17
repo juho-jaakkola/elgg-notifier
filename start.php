@@ -188,9 +188,13 @@ function notifier_notification_send($hook, $type, $result, $params) {
 		}
 	}
 
-	// Use summary string if river string is not available
-	if ($string == elgg_echo($string) && !empty($notification->summary)) {
-		$string = $notification->summary;
+	// If the river string is not available, fall back to summary or subject
+	if ($string == elgg_echo($string)) {
+		if ($notification->summary) {
+			$string = $notification->summary;
+		} else {
+			$string = $notification->subject;
+		}
 	}
 
 	$note = new ElggNotification();
