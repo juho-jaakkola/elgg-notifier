@@ -1,0 +1,8 @@
+before_commands:
+  - mkdir ../elgg-coding-standards
+  - git clone https://github.com/Elgg/elgg-coding-standards.git ../elgg-coding-standards/
+
+tools:
+  php_code_sniffer:
+    config:
+      ruleset: ../elgg-coding-standards/elgg.xml
