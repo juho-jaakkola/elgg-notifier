@@ -41,7 +41,6 @@ function notifier_init () {
 	// Hook handler for cron that removes old messages
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
 	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
-	//elgg_register_plugin_hook_handler('action', 'friends/add', 'notifier_friend_notifications');
 
 	elgg_register_event_handler('create', 'user', 'notifier_enable_for_new_user');
 	elgg_register_event_handler('join', 'group', 'notifier_enable_for_new_group_member');
@@ -264,82 +263,6 @@ function notifier_get_unread ($options = array()) {
 	}
 
 	return $notifications;
-}
-
-/**
- * Notify when user is added as someone's friend
- */
-function notifier_friend_notifications ($hook, $type, $return, $params) {
-	$friend_guid = get_input('friend');
-	$user_guid = elgg_get_logged_in_user_guid();
-
-	if ($friend_guid) {
-		// Having the logged in user as target is illogical but this way
-		// we can search by target_guid in view notifier/view_listener
-		notifier_add_notification(array(
-			'title' => 'friend:newfriend:subject',
-			'user_guid' => $friend_guid,
-			'target_guid' => $user_guid,
-			'subject_guid' => $user_guid,
-		));
-	}
-
-	return $return;
-}
-
-/**
- * Add a new notification if similar not already exists
- *
- * @uses int $options['user_guid']    GUID of the user being notified
- * @uses int $options['target_guid']  GUID of the entity being acted on
- * @uses int $options['subject_guid'] GUID of the user acting on target
- * @uses string $options['title']     Translation string of the action
- */
-function notifier_add_notification ($options) {
-	$user_guid = $options['user_guid'];
-	$target_guid = $options['target_guid'];
-	$subject_guid = $options['subject_guid'];
-	$title = $options['title'];
-
-	$db_prefix = elgg_get_config('dbprefix');
-	$ia = elgg_set_ignore_access(true);
-
-	// Check if the same notification already exists
-	$notifiers = elgg_get_entities_from_metadata(array(
-		'type' => 'object',
-		'subtype' => 'notification',
-		'owner_guid' => $user_guid,
-		'joins' => array(
-			"JOIN {$db_prefix}objects_entity oe ON e.guid = oe.guid"
-		),
-		'wheres' => array("title = '$title'"),
-		'metadata_name_value_pairs' => array(
-			array(
-				'name' => 'target_guid',
-				'value' => $target_guid,
-			),
-			array(
-				'name' => 'subject_guid',
-				'value' => $subject_guid
-			),
-			array(
-				'name' => 'status',
-				'value' => 'unread',
-			)
-		),
-	));
-
-	if (empty($notifiers)) {
-		$notification = new ElggNotification();
-		$notification->title = $title;
-		$notification->owner_guid = $user_guid;
-		$notification->container_guid = $user_guid;
-		$notification->setSubject($subject);
-		$notification->setTarget($target_guid);
-		$notification->save();
-	}
-
-	elgg_set_ignore_access($ia);
 }
 
 /**
