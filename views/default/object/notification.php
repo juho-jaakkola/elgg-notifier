@@ -57,13 +57,25 @@ if (count($subjects) > 1 && elgg_view_exists($view)) {
 		'target_link' => $target_link
 	));
 } else {
-	$subject_link = elgg_view('output/url', array(
-		'href' => $subject->getURL(),
-		'text' => $subject->name,
-		'is_trusted' => true,
-	));
+	// Check whether the string has already been translated
+	if (strpos(elgg_echo($notification->title), '%s') !== false) {
+		// Use a separate link for subject and target
 
-	$subtitle = elgg_echo($notification->title, array($subject_link, $target_link));
+		$subject_link = elgg_view('output/url', array(
+			'href' => $subject->getURL(),
+			'text' => $subject->name,
+			'is_trusted' => true,
+		));
+
+		$subtitle = elgg_echo($notification->title, array($subject_link, $target_link));
+	} else {
+		// Use the whole notification subject as a link text
+		$subtitle = elgg_view('output/url', array(
+			'href' => $target->getURL(),
+			'text' => $notification->title,
+			'is_trusted' => true,
+		));
+	}
 }
 
 $time = elgg_view_friendly_time($notification->time_created);
