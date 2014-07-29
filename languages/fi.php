@@ -1,6 +1,6 @@
 <?php
 
-$lang = array(
+return array(
 	'notifier:' => '',
 	'notifier:notification' => 'Ilmoitus',
 	'notifier:notifications' => 'Ilmoitukset',
@@ -59,5 +59,3 @@ $lang = array(
 	'notifier:settings:enable_groups' => 'Ryhmien ilmoitukset',
 	'notifier:settings:enable_groups:desc' => 'Käyttäjä saa ilmoituksen, kun joku lisää uutta sisältöä ryhmään, jossa hän on jäsenenä.',
 );
-
-add_translation('fi', $lang);

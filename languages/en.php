@@ -1,6 +1,6 @@
 <?php
 
-$lang = array(
+return array(
 	'notifier:' => '',
 	'notifier:notification' => 'Notification',
 	'notifier:notifications' => 'Notifications',
@@ -59,5 +59,3 @@ $lang = array(
 	'notifier:settings:enable_groups' => 'Group notifications',
 	'notifier:settings:enable_groups:desc' => 'A notification is added when new content is added to a group that the user is a member of.',
 );
-
-add_translation('en', $lang);
