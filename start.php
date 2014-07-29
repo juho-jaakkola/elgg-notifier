@@ -43,7 +43,6 @@ function notifier_init () {
 	elgg_register_plugin_hook_handler('register', 'menu:topbar', 'notifier_topbar_menu_setup');
 	//elgg_register_plugin_hook_handler('action', 'friends/add', 'notifier_friend_notifications');
 
-	//elgg_register_event_handler('create', 'annotation', 'notifier_annotation_notifications');
 	elgg_register_event_handler('create', 'user', 'notifier_enable_for_new_user');
 	elgg_register_event_handler('join', 'group', 'notifier_enable_for_new_group_member');
 
@@ -286,65 +285,6 @@ function notifier_friend_notifications ($hook, $type, $return, $params) {
 	}
 
 	return $return;
-}
-
-/**
- * Handle annotation notifications
- *
- * @param string         $event
- * @param string         $type
- * @param ElggAnnotation $annotation
- * @return boolean
- */
-function notifier_annotation_notifications($event, $type, $annotation) {
-	$supported_types = array('generic_comment', 'likes', 'messageboard');
-
-	if (!in_array($annotation->name, $supported_types)) {
-		return true;
-	}
-
-	$entity = $annotation->getEntity();
-	$owner_guid = $entity->getOwnerGUID();
-
-	$subject_guid = $annotation->owner_guid;
-
-	// Do not notify about own annotations
-	if ($subject_guid != $owner_guid) {
-		// Check if user has enabled notifier for personal notifications
-		$metadata = elgg_get_metadata(array(
-			'metadata_name' => 'notification:method:notifier',
-			'guid' => $owner_guid
-		));
-
-		if (!empty($metadata[0]->value)) {
-			$target_guid = $entity->getGUID();
-
-			switch ($annotation->name) {
-				case 'likes':
-					$title = 'likes:notifications:subject';
-					break;
-				case 'messageboard':
-					$title = 'river:messageboard:user:default';
-					$target_guid = $owner_guid;
-					break;
-				default:
-					// We'll assume it's a comment
-					$type = $entity->getType();
-					$subtype = $entity->getSubtype();
-					$title = "river:comment:$type:$subtype";
-					break;
-			}
-
-			notifier_add_notification(array(
-				'title' => $title,
-				'user_guid' => $owner_guid,
-				'target_guid' => $target_guid,
-				'subject_guid' => $subject_guid
-			));
-		}
-	}
-
-	return TRUE;
 }
 
 /**
