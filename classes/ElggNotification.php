@@ -22,6 +22,7 @@ class ElggNotification extends ElggObject {
 	 * Set the user triggering the notification
 	 *
 	 * @param ElggUser $user
+	 * @return bool
 	 */
 	public function setSubject ($user) {
 		return $this->addRelationship($user->guid, self::HAS_ACTOR);
@@ -31,6 +32,7 @@ class ElggNotification extends ElggObject {
 	 * Set the object involved in the notification
 	 *
 	 * @param ElggEntity $entity
+	 * @return bool
 	 */
 	public function setTarget ($entity) {
 		return $this->addRelationship($entity->guid, self::HAS_OBJECT);
@@ -39,7 +41,7 @@ class ElggNotification extends ElggObject {
 	/**
 	 * Get the object of the notification
 	 *
-	 * @return ElggObject
+	 * @return ElggObject $object
 	 */
 	public function getTarget () {
 		$object = $this->getEntitiesFromRelationship(array('relationship' => self::HAS_OBJECT));
@@ -53,7 +55,7 @@ class ElggNotification extends ElggObject {
 	/**
 	 * Get the user who triggered the notification
 	 *
-	 * @return ElggUser
+	 * @return ElggUser $subject
 	 */
 	public function getSubject () {
 		$subject = $this->getSubjects();
@@ -75,6 +77,8 @@ class ElggNotification extends ElggObject {
 
 	/**
 	 * Mark this notification as read
+	 *
+	 * @return void
 	 */
 	public function markRead() {
 		$this->status = 'read';
@@ -82,6 +86,8 @@ class ElggNotification extends ElggObject {
 
 	/**
 	 * Mark this notification as unread
+	 *
+	 * @return void
 	 */
 	public function markUnread() {
 		$this->status = 'unread';
