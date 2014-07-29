@@ -29,8 +29,8 @@ class ElggNotification extends ElggObject {
 
 	/**
 	 * Set the object involved in the notification
-	 * 
-	 * @param ElggEntity $user
+	 *
+	 * @param ElggEntity $entity
 	 */
 	public function setTarget ($entity) {
 		return $this->addRelationship($entity->guid, self::HAS_OBJECT);
@@ -66,7 +66,7 @@ class ElggNotification extends ElggObject {
 
 	/**
 	 * Get all users who participate in the notification
-	 * 
+	 *
 	 * @return ElggUser[]|false
 	 */
 	public function getSubjects() {

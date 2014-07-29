@@ -31,6 +31,7 @@ if ($notifications) {
 		'is_trusted' => true,
 	));
 } else {
+	$notification_list = '';
 	$link = elgg_echo('notifier:none');
 }
 

@@ -236,7 +236,7 @@ function notifier_count_unread () {
  * Get all unread messages for logged in users
  *
  * @param  array $options Options passed to elgg_get_entities_from_metadata
- * @return ElggNotification[]|null
+ * @return ElggNotification[]
  */
 function notifier_get_unread ($options = array()) {
 	$defaults = array(
@@ -252,7 +252,13 @@ function notifier_get_unread ($options = array()) {
 
 	$options = array_merge($defaults, $options);
 
-	return elgg_get_entities_from_metadata($options);
+	$notifications = elgg_get_entities_from_metadata($options);
+
+	if (!$notifications) {
+		$notifications = array();
+	}
+
+	return $notifications;
 }
 
 /**
