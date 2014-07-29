@@ -164,7 +164,12 @@ function notifier_notification_send($hook, $type, $result, $params) {
 			if ($object instanceof ElggComment) {
 				// Use comment's container as notification target
 				$entity = $object->getContainerEntity();
-				$string = "river:comment:{$entity->getType()}:{$entity->getSubtype()}";
+
+				// Check the action because this isn't necessarily a new comment,
+				// but e.g. someone being mentioned in a comment
+				if ($action == 'create') {
+					$string = "river:comment:{$entity->getType()}:{$entity->getSubtype()}";
+				}
 
 				// TODO How about discussion replies?
 			} else {
@@ -173,7 +178,7 @@ function notifier_notification_send($hook, $type, $result, $params) {
 			}
 	}
 
-	if ($object->getType() == 'annotation' || $object->getType() == 'relationship' || $object instanceof ElggComment) {
+	if ($object->getType() == 'annotation' || $object->getType() == 'relationship' || ($object instanceof ElggComment && $action == 'create')) {
 		// Check if similar notification already exists
 		$existing = notifier_get_similar($event->getDescription(), $entity, $recipient);
 		if ($existing) {

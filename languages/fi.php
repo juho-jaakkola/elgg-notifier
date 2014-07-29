@@ -27,6 +27,7 @@ $lang = array(
 
 	// River strings that are not available in Elgg core
 	'river:comment:object:groupforumtopic' => '%s vastasi keskusteluun %s',
+	'river:mention:object:comment' => '%s mainitsi sinut kohteessa %s',
 
 	// This is used to create messages like "Lisa and George like your post"
 	'notifier:two_subjects' => '%s ja %s',
