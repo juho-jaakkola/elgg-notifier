@@ -40,6 +40,6 @@ if ($subject_count == 2) {
 	));
 }
 
-$subtitle = elgg_echo($notification->title, array($subjects_string, $target_link));
+$subtitle = elgg_echo('comment:notifications:summary:n', array($subjects_string, $target_link));
 
 echo $subtitle;
