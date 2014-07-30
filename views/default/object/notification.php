@@ -9,11 +9,7 @@ $notification = $vars['entity'];
 
 $target = $notification->getTarget();
 $subjects = $notification->getSubjects();
-
-// TODO Find a way to get rid of this subtype specific code
-if (elgg_instanceof($target, 'object', 'comment')) {
-	$target = $target->getContainerEntity();
-}
+$subject = $notification->getSubject();
 
 if (!$target || empty($subjects)) {
 	// Add admin notice to help trace the reason of invalid notifications
@@ -29,53 +25,19 @@ if (!$target || empty($subjects)) {
 	return false;
 }
 
-$display_name = $target->getDisplayName();
-if (!empty($display_name)) {
-	$text = $display_name;
-} else {
-	if (!empty($target->description)) {
-		$text = elgg_get_excerpt($target->description, 20);
-	} else {
-		$text = elgg_echo('unknown');
-	}
-}
+$vars['target'] = $target;
+$vars['subject'] = $subject;
+$vars['subjects'] = $subjects;
+$vars['notification'] = $notification;
 
-$target_link = elgg_view('output/url', array(
-	'href' => $target->getURL(),
-	'text' => $text,
-	'is_trusted' => true,
-));
-
-$subject = $subjects[0];
 $event_view = str_replace(':', '/', $notification->event);
 $view = "notifier/messages/$event_view";
 
-if (count($subjects) > 1 && elgg_view_exists($view)) {
+if (elgg_view_exists($view)) {
 	// Use special view for this notification type
-	$subtitle = elgg_view($view, array(
-		'entity' => $notification,
-		'target_link' => $target_link
-	));
+	$subtitle = elgg_view($view, $vars);
 } else {
-	// Check whether the string has already been translated
-	if (strpos(elgg_echo($notification->title), '%s') !== false) {
-		// Use a separate link for subject and target
-
-		$subject_link = elgg_view('output/url', array(
-			'href' => $subject->getURL(),
-			'text' => $subject->name,
-			'is_trusted' => true,
-		));
-
-		$subtitle = elgg_echo($notification->title, array($subject_link, $target_link));
-	} else {
-		// Use the whole notification subject as a link text
-		$subtitle = elgg_view('output/url', array(
-			'href' => $target->getURL(),
-			'text' => $notification->title,
-			'is_trusted' => true,
-		));
-	}
+	$subtitle = elgg_view('notifier/messages/create/default', $vars);
 }
 
 $time = elgg_view_friendly_time($notification->time_created);
