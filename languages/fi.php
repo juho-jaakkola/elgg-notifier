@@ -49,6 +49,11 @@ return array(
 	'comment:notifications:summary:2' => '%s ja %s kommentoivat kohdetta %s',
 	'comment:notifications:summary:n' => '%s kommentoivat kohdetta %s',
 
+	// Groups
+	'groups:notifications:invitation' => '%s on kutsunut sinut ryhmään %s',
+	'groups:notifications:invitation:hidden' => 'Sinulla on uusi %s henkilöltä %s',
+	'groups:invitation' => 'ryhmäkutsu',
+
 	// Plugin settings
 	'notifier:settings:desc' => 'Oletusasetukset uusille käyttäjille',
 	'notifier:settings:enable_personal' => 'Henkilökohtaiset ilmoitukset',

@@ -49,6 +49,11 @@ return array(
 	'comment:notifications:summary:2' => '%s and %s commented %s',
 	'comment:notifications:summary:n' => '%s commented %s',
 
+	// Groups
+	'groups:notifications:invitation' => '%s has invited you to the group %s',
+	'groups:notifications:invitation:hidden' => 'You have a new %s from %s',
+	'groups:invitation' => 'group invitation',
+
 	// Plugin settings
 	'notifier:settings:desc' => 'Default notification settings for new users',
 	'notifier:settings:enable_personal' => 'Personal notifications',

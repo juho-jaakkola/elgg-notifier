@@ -7,7 +7,12 @@
 
 $notification = $vars['entity'];
 
+// Ignore access to make e.g. a hidden group visible in membership invitation
+// TODO Find an alternate approach that doesn't risk security
+$ia = elgg_set_ignore_access(true);
 $target = $notification->getTarget();
+elgg_set_ignore_access($ia);
+
 $subjects = $notification->getSubjects();
 $subject = $notification->getSubject();
 

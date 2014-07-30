@@ -37,6 +37,7 @@ function notifier_init () {
 	elgg_register_plugin_hook_handler('route', 'friendsof', 'notifier_read_friends_notification');
 
 	elgg_register_event_handler('create', 'relationship', 'notifier_relationship_notifications');
+	elgg_register_event_handler('delete', 'relationship', 'notifier_read_group_invitation_notification');
 
 	// Hook handler for cron that removes old messages
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
@@ -515,11 +516,22 @@ function notifier_relationship_notifications ($event, $type, $object) {
 			$target = $recipient;
 			$string = 'friend:notifications:summary';
 			break;
+		case 'invited':
+			// Notification about a group membership invitation
+			$actor = elgg_get_logged_in_user_entity(); // User who invited
+			$target = get_entity($guid_one); // The group
+			$recipient = get_user($guid_two); // The invited user
+			$string = 'groups:notifications:invitation';
+			break;
 		default;
 			return true;
 	}
 
 	if (!$actor) {
+		return true;
+	}
+
+	if (!$recipient) {
 		return true;
 	}
 
@@ -545,5 +557,49 @@ function notifier_relationship_notifications ($event, $type, $object) {
 	elgg_set_ignore_access($ia);
 
 	// Returning false would delete the relationship
+	return true;
+}
+
+/**
+ * Delete notification about a group invitation when user accepts/deletes it
+ *
+ * @param string           $event  'delete'
+ * @param string           $type   'relationship'
+ * @param ElggRelationship $object The relationship being deleted
+ * @return boolean
+ */
+function notifier_read_group_invitation_notification($event, $type, $object) {
+	$relationship = $object->relationship;
+
+	// Proceed only if the relationship is an invitation
+	if ($relationship != 'invited') {
+		return true;
+	}
+
+	// The group may be hidden, so ignore access
+	$ia = elgg_set_ignore_access(true);
+	$group = get_entity($object->guid_one);
+	elgg_set_ignore_access($ia);
+
+	// Proceed only if the invitation is for a group
+	if (!$group instanceof ElggGroup) {
+		return true;
+	}
+
+	$dbprefix = elgg_get_config('dbprefix');
+	$has_object = ElggNotification::HAS_OBJECT;
+	$options = array(
+		'joins' => array("JOIN {$dbprefix}entity_relationships er ON e.guid = er.guid_one"),
+		'wheres' => array("er.relationship = '{$has_object}' AND er.guid_two = {$group->guid}"),
+	);
+
+	// Get unread notifications
+	$notifications = notifier_get_unread($options);
+
+	foreach ($notifications as $note) {
+		$note->markRead();
+	}
+
+	// Returning true means that the relationship deletion can now proceed
 	return true;
 }
