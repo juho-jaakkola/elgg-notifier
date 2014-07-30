@@ -1,3 +1,10 @@
+Version 1.9.0-beta2 (2014-08-):
+
+ Enhancements
+  * Adds support for notifications about group invitations
+  * Removes a lot of obsolete code
+
+
 Version 1.9.0-beta1 (2014-07-29):
 
  Enhancements:

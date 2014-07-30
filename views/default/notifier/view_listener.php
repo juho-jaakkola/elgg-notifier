@@ -1,9 +1,9 @@
 <?php
 /**
  * Add a view listener that marks notifications read when displaying the entity
- * 
+ *
  * @uses $vars['entity'] An elgg entity which the views counter will be added
- * @uses $vars['entity_guid'] An elgg entity guid that may be used instead of $vars['entity'] 
+ * @uses $vars['entity_guid'] An elgg entity guid that may be used instead of $vars['entity']
  */
 
 $override = false;
@@ -12,7 +12,7 @@ $options = array(
 	'type' => 'object',
 	'subtype' => 'notification',
 	'owner_guid' => elgg_get_logged_in_user_guid(),
-	'relationship' => 'hasObject', // TODO Use constant
+	'relationship' => ElggNotification::HAS_OBJECT,
 	'inverse_relationship' => true,
 );
 
@@ -44,7 +44,7 @@ if ($options['relationship_guid'] && ($vars['full_view'] || $override)) {
 
 	// Mark all the notifications related to this entity as "read"
 	if ($notifications) {
-		foreach($notifications as $item) {
+		foreach ($notifications as $item) {
 			$item->markRead();
 		}
 	}

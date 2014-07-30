@@ -5,6 +5,8 @@
  * @property int    $status The status of the notification (read, unread)
  * @property string $event  String "action:type:subtype" that can be used
  *                          to add more subjects to a notification later
+ *
+ * @package Notifer
  */
 class ElggNotification extends ElggObject {
 
@@ -21,7 +23,7 @@ class ElggNotification extends ElggObject {
 	/**
 	 * Set the user triggering the notification
 	 *
-	 * @param ElggUser $user
+	 * @param ElggUser $user User whose action triggered the notification
 	 * @return bool
 	 */
 	public function setSubject ($user) {
@@ -31,7 +33,7 @@ class ElggNotification extends ElggObject {
 	/**
 	 * Set the object involved in the notification
 	 *
-	 * @param ElggEntity $entity
+	 * @param ElggEntity $entity Entity that the notification is about
 	 * @return bool
 	 */
 	public function setTarget ($entity) {

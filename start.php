@@ -9,6 +9,8 @@ elgg_register_event_handler('init', 'system', 'notifier_init');
 
 /**
  * Initialize the plugin
+ *
+ * @return void
  */
 function notifier_init () {
 	notifier_set_view_listener();
@@ -269,10 +271,10 @@ function notifier_get_unread ($options = array()) {
 /**
  * Remove over week old notifications that have been read
  *
- * @param string  $hook   Hook name
- * @param string  $type   Hook type
- * @param string  $return
- * @param $params array   Array with the time when cron was triggered
+ * @param string $hook   Hook name
+ * @param string $type   Hook type
+ * @param string $return Old stdOut contents
+ * @param array  $params Array containing the time when cron was triggered
  * @return void
  */
 function notifier_cron ($hook, $type, $return, $params) {
@@ -307,6 +309,8 @@ function notifier_cron ($hook, $type, $return, $params) {
 
 /**
  * Add view listener to views that may be the targets of notifications
+ *
+ * @return void
  */
 function notifier_set_view_listener () {
 	$dbprefix = elgg_get_config('dbprefix');
@@ -343,7 +347,7 @@ function notifier_set_view_listener () {
  *
  * @param string   $event 'create'
  * @param string   $type  'user'
- * @param ElggUser $user
+ * @param ElggUser $user  The user that was created
  * @return boolean
  */
 function notifier_enable_for_new_user ($event, $type, $user) {
@@ -472,8 +476,9 @@ function notifier_prepare_likes_notification($hook, $type, $notification, $param
  *
  * @param string $hook   Hook name
  * @param string $type   Hook type
- * @param array  $return
- * @param array  $params
+ * @param array  $return Array containing 'identifier' and 'segments'
+ * @param array  $params This is empty
+ * @return void
  */
 function notifier_read_friends_notification ($hook, $type, $return, $params) {
 	// Get unread notifications that match the friending event
