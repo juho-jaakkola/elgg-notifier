@@ -32,10 +32,6 @@ function notifier_init () {
 	elgg_register_notification_method('notifier');
 	elgg_register_plugin_hook_handler('send', 'notification:notifier', 'notifier_notification_send');
 
-	// Notifications for likes
-	elgg_register_notification_event('annotation', 'likes', array('create'));
-	elgg_register_plugin_hook_handler('prepare', 'notification:create:annotation:likes', 'notifier_prepare_likes_notification');
-
 	elgg_register_plugin_hook_handler('route', 'friendsof', 'notifier_read_friends_notification');
 
 	elgg_register_event_handler('create', 'relationship', 'notifier_relationship_notifications');
@@ -433,38 +429,6 @@ function notifier_get_similar($event_name, $entity, $recipient) {
 	}
 
 	elgg_set_ignore_access($ia);
-
-	return $notification;
-}
-
-/**
- * Prepare a notification message about a new like
- *
- * @param string                          $hook         Hook name
- * @param string                          $type         Hook type
- * @param Elgg_Notifications_Notification $notification The notification to prepare
- * @param array                           $params       Hook parameters
- * @return Elgg_Notifications_Notification
- */
-function notifier_prepare_likes_notification($hook, $type, $notification, $params) {
-	$annotation = $params['event']->getObject();
-	$entity = $annotation->getEntity();
-	$owner = $params['event']->getActor();
-	$recipient = $params['recipient'];
-	$language = $params['language'];
-	$method = $params['method'];
-	$site = elgg_get_site_entity();
-
-	$notification->subject = elgg_echo('likes:notifications:subject', array($entity->title), $language);
-	$notification->body = elgg_echo('likes:notifications:body', array(
-		$recipient->name,
-		$owner->name,
-		$entity->title,
-		$site->name,
-		$entity->getURL(),
-		$owner->getURL(),
-	), $language);
-	$notification->summary = 'likes:notifications:summary';
 
 	return $notification;
 }
