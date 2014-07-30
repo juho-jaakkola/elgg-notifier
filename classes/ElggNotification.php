@@ -53,6 +53,26 @@ class ElggNotification extends ElggObject {
 	}
 
 	/**
+	 * Get display name of the notification target
+	 *
+	 * @return string $name Display name
+	 */
+	public function getTargetName() {
+		$target = $this->getTarget();
+
+		$name = $target->getDisplayName();
+		if (empty($name)) {
+			if (empty($target->description)) {
+				$name = elgg_echo('unknown');
+			} else {
+				$name = elgg_get_excerpt($target->description, 20);
+			}
+		}
+
+		return $name;
+	}
+
+	/**
 	 * Get the user who triggered the notification
 	 *
 	 * @return ElggUser $subject
