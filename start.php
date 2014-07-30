@@ -33,10 +33,10 @@ function notifier_init () {
 	// Notifications for likes
 	elgg_register_notification_event('annotation', 'likes', array('create'));
 	elgg_register_plugin_hook_handler('prepare', 'notification:create:annotation:likes', 'notifier_prepare_likes_notification');
-	// Notifications about new friends
-	elgg_register_notification_event('relationship', 'friend', array('create'));
-	elgg_register_plugin_hook_handler('prepare', 'notification:create:relationship:friend', 'notifier_prepare_friend_notification');
+
 	elgg_register_plugin_hook_handler('route', 'friendsof', 'notifier_read_friends_notification');
+
+	elgg_register_event_handler('create', 'relationship', 'notifier_relationship_notifications');
 
 	// Hook handler for cron that removes old messages
 	elgg_register_plugin_hook_handler('cron', 'daily', 'notifier_cron');
@@ -465,30 +465,6 @@ function notifier_prepare_likes_notification($hook, $type, $notification, $param
 }
 
 /**
- * Prepare notification message about a new friend
- *
- * @param string                          $hook         Hook name
- * @param string                          $type         Hook type
- * @param Elgg_Notifications_Notification $notification The notification to prepare
- * @param array                           $params       Hook parameters
- * @return Elgg_Notifications_Notification $notification
- */
-function notifier_prepare_friend_notification($hook, $type, $notification, $params) {
-	$relationship = $params['event']->getObject();
-	$actor = $params['event']->getActor();
-	$language = $params['language'];
-
-	$notification->subject = elgg_echo('friend:newfriend:subject', array($actor->name), $language);
-	$notification->body = elgg_echo('friend:newfriend:body', array(
-		$actor->name,
-		$actor->getURL(),
-	), $language);
-	$notification->summary = 'friend:notifications:summary';
-
-	return $notification;
-}
-
-/**
  * Mark unread friend notifications as read.
  *
  * This hook is triggered when user goes to the "friendsof/<username>" page.
@@ -512,4 +488,62 @@ function notifier_read_friends_notification ($hook, $type, $return, $params) {
 	foreach ($notifications as $note) {
 		$note->markRead();
 	}
+}
+
+/**
+ * Create notifications about new relationships
+ *
+ * The Elgg 1.9 notifications system does not yet process relationships
+ * so we create the notifications manually on the 'create', 'relationship'
+ * event instead.
+ *
+ * @param string           $event  'create'
+ * @param string           $type   'relationship'
+ * @param ElggRelationship $object The created relationships
+ * @return boolean Always returns true
+ */
+function notifier_relationship_notifications ($event, $type, $object) {
+	$guid_one = $object->guid_one;
+	$guid_two = $object->guid_two;
+	$relationship = $object->relationship;
+
+	switch ($relationship) {
+		case 'friend':
+			// Notification about a new friend
+			$actor = get_user($guid_one);
+			$recipient = get_user($guid_two);
+			$target = $recipient;
+			$string = 'friend:notifications:summary';
+			break;
+		default;
+			return true;
+	}
+
+	if (!$actor) {
+		return true;
+	}
+
+	if (!$target) {
+		return true;
+	}
+
+	$ia = elgg_set_ignore_access(true);
+
+	$note = new ElggNotification();
+	$note->title = $string;
+	$note->owner_guid = $recipient->guid;
+	$note->container_guid = $recipient->guid;
+	$note->event = "create:relationship:{$relationship}";
+
+	$result = $note->save();
+
+	if ($result) {
+		$note->setSubject($actor);
+		$note->setTarget($target);
+	}
+
+	elgg_set_ignore_access($ia);
+
+	// Returning false would delete the relationship
+	return true;
 }
