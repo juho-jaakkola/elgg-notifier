@@ -6,6 +6,7 @@
 $notification = $vars['entity'];
 $subjects = $notification->getSubjects();
 $subject_count = count($subjects);
+$target = elgg_extract('target', $vars);
 
 if (elgg_instanceof($target, 'object', 'comment')) {
 	$vars['target'] = $target->getContainerEntity();
@@ -26,8 +27,6 @@ if ($subject_count === 1) {
 		'text' => $subject->name,
 		'is_trusted' => true,
 	));
-
-	$target = $notification->getTarget();
 
 	if ($subject_count == 2) {
 		$subject2 = $subjects[1];
