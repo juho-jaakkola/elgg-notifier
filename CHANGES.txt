@@ -1,8 +1,14 @@
-Version 1.9.0-beta2 (2014-08-):
+Version 1.9.0-beta2 (2014-08-04):
 
  Enhancements
   * Adds support for notifications about group invitations
   * Removes a lot of obsolete code
+  * Converts javascript to AMD
+
+ Bugfixes:
+  * Fixes lightbox bindings after fetching notifications via AJAX
+  * Fixes notifications about new friends
+  * Fixes notifications that were missing a link
 
 
 Version 1.9.0-beta1 (2014-07-29):
