@@ -1,0 +1,18 @@
+{
+	"name": "juho-jaakkola/elgg-notifier",
+	"description": "Displays notifications in Elgg topbar.",
+	"type": "elgg-plugin",
+	"keywords": [
+		"elgg",
+		"plugin",
+		"notifications"
+	],
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Juho Jaakkola",
+			"email": "juho.a.jaakkola@gmail.com",
+			"role": "Developer"
+		}
+	]
+}
