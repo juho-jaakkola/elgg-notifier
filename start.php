@@ -74,8 +74,12 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 				// Don't allow the counter to grow endlessly
 				$count = '99+';
 			}
-			$text .= "<span id=\"notifier-new\">$count</span>";
+			$hidden = '';
+		} else {
+			$hidden = 'hidden';
 		}
+
+		$text .= "<span id=\"notifier-new\" $hidden>$count</span>";
 
 		$item = ElggMenuItem::factory(array(
 			'name' => 'notifier',
