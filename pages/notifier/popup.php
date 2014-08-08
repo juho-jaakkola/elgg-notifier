@@ -16,30 +16,19 @@ $notifications = elgg_get_entities_from_metadata(array(
 if ($notifications) {
 	// Use "widgets" context to tell that we're displaying the popup instead of a full list
 	elgg_push_context('widgets');
-	$notification_list = elgg_view_entity_list($notifications, array(
-		'full_view' => false,
-		'pagination' => false,
-	));
-	elgg_pop_context();
 
-	// Link to all notifications
-	$link = elgg_view('output/url', array(
-		'href' => 'notifier/all',
-		'text' => elgg_echo('notifier:view:all'),
-		'class' => 'float',
-		'id' => 'notifier-view-all',
-		'is_trusted' => true,
-	));
+	$list = '';
+	foreach ($notifications as $notification) {
+		$list_item = elgg_view_list_item($notification, array(
+			'full_view' => false,
+		));
+
+		$list .= "<li id=\"elgg-object-{$notification->guid}\" class=\"elgg-item elgg-item-object elgg-item-object-notification\">$list_item</li>";
+	}
+
+	elgg_pop_context();
 } else {
-	$notification_list = '';
-	$link = elgg_echo('notifier:none');
+	$list = null;
 }
 
-$settings_link = elgg_view('output/url', array(
-	'href' => 'notifications/personal',
-	'text' => elgg_echo('settings'),
-	'class' => 'float-alt',
-	'is_trusted' => true,
-));
-
-echo "$notification_list $link $settings_link";
+echo $list;

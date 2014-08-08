@@ -45,12 +45,16 @@ $notifications = elgg_list_entities_from_metadata(array(
 		'name' => 'status',
 		'direction' => 'DESC'
 	),
+	'list_class' => 'elgg-list-notifier',
 ));
 
 if ($notifications) {
 	$params['content'] = $notifications;
 } else {
-	$params['content'] = elgg_echo('notifier:none');
+	$none_text = elgg_echo('notifier:none');
+	$content = "<span class=\"notifier-none\">$none_text</span><ul class=\"elgg-list elgg-list-notifier\"></ul>";
+
+	$params['content'] = $content;
 }
 
 $body = elgg_view_layout('content', $params);

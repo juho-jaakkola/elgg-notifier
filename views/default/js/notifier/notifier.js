@@ -59,21 +59,40 @@ define(function(require) {
 	var popup = function(e) {
 		elgg.get('notifier/popup', {
 			success: function(output) {
-				$('#notifier-popup .elgg-body').html(output);
+				if (output) {
+					// Add the received <li> elements into the list
+					$('#notifier-popup > .elgg-body > ul').html(output);
 
-				// Check if there are unread notifications
-				$('.elgg-notifier-unread').each(function() {
-					// Found an unread notification so display the "Dismiss all" icon
-					$('#notifier-dismiss-all').removeClass('hidden');
-					return false;
-				});
+					// Hide the "No notifications" texts
+					$('.notifier-none').attr('hidden', '');
 
-				// Check if there are links that trigger a lightbox
-				$('#notifier-popup .elgg-lightbox').each(function() {
-					// Bind lightbox to the new links
-					elgg.ui.lightbox.bind(".elgg-lightbox");
-					return false;
-				});
+					// Display the "View all" link
+					$('#notifier-view-all').removeAttr('hidden');
+
+					// Check if there are unread notifications
+					$('.elgg-notifier-unread').each(function() {
+						// Display the "Dismiss all" icon
+						$('#notifier-dismiss-all').removeAttr('hidden');
+
+						return false;
+					});
+
+					// Check if there are links that trigger a lightbox
+					$('#notifier-popup .elgg-lightbox').each(function() {
+						// Bind lightbox to the new links
+						elgg.ui.lightbox.bind(".elgg-lightbox");
+						return false;
+					});
+				} else {
+					// Hide the "Dismiss all" icon
+					$('#notifier-dismiss-all').attr('hidden', '');
+
+					// Hide the "View all" link
+					$('#notifier-view-all').attr('hidden', '');
+
+					// Display the "No notifications" text
+					$('.notifier-none').removeAttr('hidden');
+				}
 			}
 		});
 
