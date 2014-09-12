@@ -1,3 +1,8 @@
+Version 1.9.0 (2014-09-12)
+ Enhancements
+  * Uses error log instead of admin notices to inform about broken entities
+
+
 Version 1.9.0-beta3 (2014-09-04)
  Bugfixes:
  * Fixes WSOD caused by experimental likes related code
