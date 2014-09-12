@@ -23,7 +23,7 @@ if (elgg_in_context('profile')) {
 	$options['relationship_guid'] = elgg_get_page_owner_guid();
 
 	// In notification "You have a new friend" the actor is the new friend
-	$options['relationship'] = 'hasActor'; // TODO Use constant
+	$options['relationship'] = ElggNotification::HAS_ACTOR;
 	$options['metadata_name_value_pairs'] = array(
 		'name' => 'event',
 		'value' => 'create:relationship:friend'
