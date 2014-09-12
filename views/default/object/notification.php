@@ -16,16 +16,14 @@ elgg_set_ignore_access($ia);
 $subjects = $notification->getSubjects();
 $subject = $notification->getSubject();
 
-if (!$target || empty($subjects)) {
-	// Add admin notice to help trace the reason of invalid notifications
+if (empty($target) || empty($subjects)) {
 	$title = $notification->title;
 	$event = $notification->event;
 	$subject = $subject->username;
 	$user = $notification->getOwnerEntity()->username;
-	$notice = "Failed to view notification $title ($event) from user $subject to user $user";
-	elgg_add_admin_notice('notifier_no_target', $notice);
+	error_log("NOTICE: Failed to view notification $title ($event) from user $subject to user $user");
 
-	// The entity to notify about doesn't exist anymore so delete the notification
+	// The notification is useless with missing information, so it can be deleted
 	$notification->delete();
 	return false;
 }
