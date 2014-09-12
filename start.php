@@ -408,6 +408,8 @@ function notifier_get_similar($event_name, $entity, $recipient) {
 	$db_prefix = elgg_get_config('dbprefix');
 	$ia = elgg_set_ignore_access(true);
 
+	$object_relationship = ElggNotification::HAS_OBJECT;
+
 	// Notification (guid_one) has relationship 'hasObject' to target (guid_two)
 	$options = array(
 		'type' => 'object',
@@ -422,7 +424,7 @@ function notifier_get_similar($event_name, $entity, $recipient) {
 		),
 		'wheres' => array(
 			"er.guid_two = {$entity->guid}",
-			"er.relationship = 'hasObject'", // TODO use constant
+			"er.relationship = '$object_relationship'",
 		),
 	);
 
