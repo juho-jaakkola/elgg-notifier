@@ -259,13 +259,7 @@ function notifier_get_unread ($options = array()) {
 
 	$options = array_merge($defaults, $options);
 
-	$notifications = elgg_get_entities_from_metadata($options);
-
-	if (!$notifications) {
-		$notifications = array();
-	}
-
-	return $notifications;
+	return elgg_get_entities_from_metadata($options);
 }
 
 /**
