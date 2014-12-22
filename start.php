@@ -144,7 +144,9 @@ function notifier_page_handler ($page) {
  */
 function notifier_notification_send($hook, $type, $result, $params) {
 	$notification = $params['notification'];
+	/* @var Elgg_Notifications_Notification $notification */
 	$event = $params['event'];
+	/* @var Elgg_Notifications_Event $event */
 
 	if (!$event) {
 		// Plugin is calling notify_user() so stop here and let

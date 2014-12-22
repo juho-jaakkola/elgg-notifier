@@ -17,46 +17,68 @@ define(function(require) {
 	 *
 	 * @return {Object}
 	 */
-	var popupHandler = function(hook, type, params, options) {
-		if (params.target.hasClass('elgg-notifier-popup')) {
-			options.my = 'left top';
-			options.at = 'left bottom';
-			options.collision = 'fit none';
-			return options;
+	function popupHandler(hook, type, params, options) {
+		if (!params.target.hasClass('elgg-notifier-popup')) {
+			return;
 		}
-		return null;
-	};
+
+		// Due to elgg.ui.popup's design, there's no way to verify in a click handler whether the
+		// click will actually be closing the popup after this hook. This is the only chance to verify
+		// whether the popup is visible or not.
+		if (params.target.is(':visible')) {
+			// user clicked the icon to close, we're just letting it close
+			return;
+		}
+
+		populatePopup();
+
+		options.my = 'left top';
+		options.at = 'left bottom';
+		options.collision = 'fit none';
+		return options;
+	}
 
 	/**
 	 * Dismiss all unread notifications and then remove related UI elements.
 	 *
-	 * @param {Object} e
 	 * @return void
 	 */
-	var dismissAll = function(e) {
-		elgg.action($(this).attr('href'), {
-			success: function() {
-				// Remove highlighting from the unread notifications
-				$('.elgg-notifier-unread').each(function() {
-					$(this).removeClass('elgg-notifier-unread');
-				});
-				// Remove notification count from topbar icon
-				$('#notifier-new').remove();
-				// Remove "Dismiss all" button
-				$('#notifier-dismiss-all').remove();
-			}
-		});
+	function dismissAll() {
+		// start delete on server but don't block
+		elgg.action(this.href);
 
-		e.preventDefault();
-	};
+		// Remove notification count from topbar icon
+		$('#notifier-new').remove();
+
+		// Remove highlighting from the unread notifications one by one
+		function dismiss() {
+			var $unread = $('.elgg-notifier-unread:first');
+			if ($unread.length) {
+				$unread.removeClass('elgg-notifier-unread');
+			} else {
+				clearInterval(dismissing);
+				// close popup
+				$('body').trigger('click');
+			}
+		}
+
+		var dismissing = setInterval(dismiss, 100);
+		dismiss();
+
+		// Fade and remove "Dismiss all" button
+		$('#notifier-dismiss-all').fadeOut().remove();
+
+		return false;
+	}
 
 	/**
 	 * Fetch notifications and display them in the popup module.
 	 *
-	 * @param {Object} e
 	 * @return void
 	 */
-	var popup = function(e) {
+	function populatePopup() {
+		$('#notifier-popup > .elgg-body > ul').html('<li><div class="elgg-ajax-loader mtm mbm"></div></li>');
+
 		elgg.get('notifier/popup', {
 			success: function(output) {
 				if (output) {
@@ -70,12 +92,10 @@ define(function(require) {
 					$('#notifier-view-all').removeAttr('hidden');
 
 					// Check if there are unread notifications
-					$('.elgg-notifier-unread').each(function() {
+					if ($('.elgg-notifier-unread').length) {
 						// Display the "Dismiss all" icon
 						$('#notifier-dismiss-all').removeAttr('hidden');
-
-						return false;
-					});
+					}
 
 					// Check if there are links that trigger a lightbox
 					$('#notifier-popup .elgg-lightbox').each(function() {
@@ -84,23 +104,20 @@ define(function(require) {
 						return false;
 					});
 				} else {
-					// Hide the "Dismiss all" icon
-					$('#notifier-dismiss-all').attr('hidden', '');
+					// remove the spinner
+					$('#notifier-popup > .elgg-body > ul').html('');
 
-					// Hide the "View all" link
-					$('#notifier-view-all').attr('hidden', '');
+					// Hide the "Dismiss all" icon & the "View all" link
+					$('#notifier-dismiss-all, #notifier-view-all').attr('hidden', '');
 
 					// Display the "No notifications" text
 					$('.notifier-none').removeAttr('hidden');
 				}
 			}
 		});
-
-		e.preventDefault();
-	};
+	}
 
 	$('#notifier-dismiss-all').live('click', dismissAll);
-	$('#notifier-popup-link').live('click', popup);
 
 	elgg.register_hook_handler('getOptions', 'ui.popup', popupHandler);
 });
