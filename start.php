@@ -76,7 +76,7 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 			}
 			$hidden = '';
 		} else {
-			$hidden = 'hidden';
+			$hidden = 'class="hidden"';
 		}
 
 		$text .= "<span id=\"notifier-new\" $hidden>$count</span>";

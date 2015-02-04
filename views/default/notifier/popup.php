@@ -9,7 +9,6 @@ $dismiss_link = elgg_view('output/url', array(
 	'title' => elgg_echo('notifier:dismiss_all'),
 	'class' => 'float-alt',
 	'id' => 'notifier-dismiss-all',
-	'hidden' => '',
 	'is_action' => true,
 	'is_trusted' => true,
 ));
@@ -28,7 +27,6 @@ $show_all_link = elgg_view('output/url', array(
 	'text' => elgg_echo('notifier:view:all'),
 	'class' => 'float',
 	'id' => 'notifier-view-all',
-	'hidden' => '',
 	'is_trusted' => true,
 ));
 

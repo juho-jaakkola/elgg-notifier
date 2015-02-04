@@ -86,15 +86,15 @@ define(function(require) {
 					$('#notifier-popup > .elgg-body > ul').html(output);
 
 					// Hide the "No notifications" texts
-					$('.notifier-none').attr('hidden', '');
+					$('.notifier-none').addClass('hidden');
 
 					// Display the "View all" link
-					$('#notifier-view-all').removeAttr('hidden');
+					$('#notifier-view-all').removeClass('hidden');
 
 					// Check if there are unread notifications
 					if ($('.elgg-notifier-unread').length) {
 						// Display the "Dismiss all" icon
-						$('#notifier-dismiss-all').removeAttr('hidden');
+						$('#notifier-dismiss-all').removeClass('hidden');
 					}
 
 					// Check if there are links that trigger a lightbox
@@ -108,10 +108,10 @@ define(function(require) {
 					$('#notifier-popup > .elgg-body > ul').html('');
 
 					// Hide the "Dismiss all" icon & the "View all" link
-					$('#notifier-dismiss-all, #notifier-view-all').attr('hidden', '');
+					$('#notifier-dismiss-all, #notifier-view-all').addClass('hidden');
 
 					// Display the "No notifications" text
-					$('.notifier-none').removeAttr('hidden');
+					$('.notifier-none').removeClass('hidden');
 				}
 			}
 		});
