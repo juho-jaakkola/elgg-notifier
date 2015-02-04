@@ -1,3 +1,13 @@
+Version 1.9.1 (2015-02-04)
+ Enhancements:
+  * The 'Dismiss all' button now visually unhighlights unread items and closes
+  * Displays an ajax spinner while loading popup content
+  * Prevents needless loading if the user clicks the icon to close the popup
+  * Uses css instead of the hidden attribute for better browser support
+ Bugfixes:
+  * Returns zero instead of an empty array for count queries with no results
+
+
 Version 1.9.0 (2014-09-12)
  Enhancements
   * Uses error log instead of admin notices to inform about broken entities
