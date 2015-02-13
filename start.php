@@ -512,18 +512,25 @@ function notifier_relationship_notifications ($event, $type, $object) {
 
 	$ia = elgg_set_ignore_access(true);
 
-	$note = new ElggNotification();
-	$note->title = $string;
-	$note->owner_guid = $recipient->guid;
-	$note->container_guid = $recipient->guid;
-	$note->event = "create:relationship:{$relationship}";
+	$event_name = "create:relationship:{$relationship}";
 
-	$result = $note->save();
+	$note = notifier_get_similar($event_name, $target, $recipient);
 
-	if ($result) {
-		$note->setSubject($actor);
+	if (!$note) {
+		$note = new ElggNotification();
+		$note->title = $string;
+		$note->owner_guid = $recipient->guid;
+		$note->container_guid = $recipient->guid;
+		$note->event = $event_name;
+		$note->save();
+
 		$note->setTarget($target);
+	} else {
+		// Mark the existing notification as unread
+		$note->markUnread();
 	}
+
+	$note->setSubject($actor);
 
 	elgg_set_ignore_access($ia);
 
