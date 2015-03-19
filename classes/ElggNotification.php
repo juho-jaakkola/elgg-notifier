@@ -60,15 +60,20 @@ class ElggNotification extends ElggObject {
 	 * @return string $name Display name
 	 */
 	public function getTargetName() {
+		$name = elgg_echo('unknown');
+
 		$target = $this->getTarget();
 
+		if (!$target) {
+			// This may happen if the target owner changes the ACL
+			// after the notification has already been created
+			return $name;
+		}
+
 		$name = $target->getDisplayName();
-		if (empty($name)) {
-			if (empty($target->description)) {
-				$name = elgg_echo('unknown');
-			} else {
-				$name = elgg_get_excerpt($target->description, 20);
-			}
+
+		if (empty($name) && $target->description) {
+			$name = elgg_get_excerpt($target->description, 20);
 		}
 
 		return $name;
