@@ -1,3 +1,8 @@
+Version 1.10.0 (2015-03-27)
+ Chores:
+  * Replaces deprecated confirmation features with data-confirm attribute
+
+
 Version 1.9.3 (2015-03-27)
  Bugfixes:
   * Fixes fatal error caused by notification target not being accessable by the recipient
