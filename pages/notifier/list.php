@@ -16,9 +16,9 @@ elgg_register_menu_item('title', array(
 	'name' => 'notification-delete',
 	'href' => 'action/notifier/clear',
 	'text' => elgg_echo('notifier:clear_all'),
-	'link_class' => 'elgg-button elgg-button-delete elgg-requires-confirmation',
+	'link_class' => 'elgg-button elgg-button-delete',
+	'data-confirm' => elgg_echo('notifier:deleteconfirm'),
 	'is_action' => true,
-	'rel' => elgg_echo('notifier:deleteconfirm'),
 ));
 
 // Link to dismiss all unread notifications

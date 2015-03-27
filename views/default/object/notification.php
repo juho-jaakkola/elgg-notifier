@@ -50,10 +50,12 @@ if (elgg_in_context('widgets')) {
 	$metadata = '';
 } else {
 	// Use link instead of entity menu since we don't want any links besides delete
-	$metadata = elgg_view('output/confirmlink', array(
+	$metadata = elgg_view('output/url', array(
 		'name' => 'delete',
 		'href' => "action/notifier/delete?guid={$notification->getGUID()}",
 		'text' => elgg_view_icon('delete'),
+		'data-confirm' => elgg_echo('question:areyousure'),
+		'is_action' => true,
 		'class' => 'float-alt',
 	));
 }
