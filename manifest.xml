@@ -3,7 +3,7 @@
 	<name>Notifier</name>
 	<id>notifier</id>
 	<author>Juho Jaakkola</author>
-	<version>1.9.2</version>
+	<version>1.9.3</version>
 	<description>Display site notifications in a handy list.</description>
 	<website>http://www.mediamaisteri.com/</website>
 	<license>GNU General Public License version 2</license>
