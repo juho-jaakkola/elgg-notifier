@@ -52,6 +52,7 @@ return array(
 	// Groups
 	'groups:notifications:invitation' => '%s has invited you to the group %s',
 	'groups:notifications:invitation:hidden' => 'You have a new %s from %s',
+	'groups:notifications:membership_request' => '%s has requested membership in group %s',
 	'groups:invitation' => 'group invitation',
 
 	// Plugin settings
