@@ -494,6 +494,13 @@ function notifier_relationship_notifications ($event, $type, $object) {
 			$recipient = get_user($guid_two); // The invited user
 			$string = 'groups:notifications:invitation';
 			break;
+		case 'membership_request':
+			// Notification about a group membership invitation
+			$actor = get_user($guid_one); // User who requested
+			$target = get_entity($guid_two); // The group
+			$recipient = get_user($target->owner_guid); // The group_owner
+			$string = 'groups:notifications:membership_request';
+			break;
 		default;
 			return true;
 	}
@@ -550,13 +557,17 @@ function notifier_read_group_invitation_notification($event, $type, $object) {
 	$relationship = $object->relationship;
 
 	// Proceed only if the relationship is an invitation
-	if ($relationship != 'invited') {
+	if ($relationship != 'invited' && $relationship != 'membership_request') {
 		return true;
 	}
 
 	// The group may be hidden, so ignore access
 	$ia = elgg_set_ignore_access(true);
-	$group = get_entity($object->guid_one);
+	if ($relationship === 'invited') {
+		$group = get_entity($object->guid_one);
+	} else {
+		$group = get_entity($object->guid_two);
+	}
 	elgg_set_ignore_access($ia);
 
 	// Proceed only if the invitation is for a group
@@ -575,7 +586,9 @@ function notifier_read_group_invitation_notification($event, $type, $object) {
 	$notifications = notifier_get_unread($options);
 
 	foreach ($notifications as $note) {
-		$note->markRead();
+		if ($note->event === "create:relationship:$relationship") {
+			$note->markRead();
+		}
 	}
 
 	// Returning true means that the relationship deletion can now proceed
