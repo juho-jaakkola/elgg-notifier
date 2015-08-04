@@ -117,7 +117,7 @@ define(function(require) {
 		});
 	}
 
-	$('#notifier-dismiss-all').live('click', dismissAll);
+	$('#notifier-dismiss-all').on('click', dismissAll);
 
 	elgg.register_hook_handler('getOptions', 'ui.popup', popupHandler);
 });
