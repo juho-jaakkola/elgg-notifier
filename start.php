@@ -66,7 +66,7 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 		// Get amount of unread notifications
 		$count = (int)notifier_count_unread();
 
-		$text = '<span class="elgg-icon elgg-icon-attention"></span>';
+		$text = elgg_view_icon('attention');
 		$tooltip = elgg_echo("notifier:unreadcount", array($count));
 
 		if ($count > 0) {
