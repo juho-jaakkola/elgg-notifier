@@ -14,5 +14,8 @@
 			"email": "juho.a.jaakkola@gmail.com",
 			"role": "Developer"
 		}
-	]
+	],
+	"extra": {
+		"installer-name": "notifier"
+	}
 }
