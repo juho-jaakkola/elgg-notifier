@@ -1,3 +1,13 @@
+Version 1.10.1 (2015-12-16)
+
+ Features:
+  * Sends notification of group membership requests to group owner
+  * The plugin is now compatible with Elgg 2.0
+
+ Fixes:
+  * Composer now uses correct plugin dir name when installing
+
+
 Version 1.10.0 (2015-03-27)
  Chores:
   * Replaces deprecated confirmation features with data-confirm attribute
