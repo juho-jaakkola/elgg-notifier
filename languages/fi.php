@@ -52,6 +52,7 @@ return array(
 	// Groups
 	'groups:notifications:invitation' => '%s on kutsunut sinut ryhmään %s',
 	'groups:notifications:invitation:hidden' => 'Sinulla on uusi %s henkilöltä %s',
+	'groups:notifications:membership_request' => '%s on anonut jäsenyyttä ryhmään %s',
 	'groups:invitation' => 'ryhmäkutsu',
 
 	// Plugin settings
