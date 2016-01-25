@@ -36,6 +36,10 @@
 	position: absolute;
 }
 
+#notifier-popup-link .elgg-icon {
+	font-size: 22px;
+}
+
 .elgg-notifier-unread {
 	background: #EDF5FF;
 }
