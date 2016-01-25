@@ -27,7 +27,7 @@ function notifier_init () {
 	elgg_register_page_handler('notifier', 'notifier_page_handler');
 
 	// Add css
-	elgg_extend_view('css/elgg', 'notifier/css');
+	elgg_extend_view('elgg.css', 'notifier/notifier.css');
 
 	elgg_register_notification_method('notifier');
 	elgg_register_plugin_hook_handler('send', 'notification:notifier', 'notifier_notification_send');

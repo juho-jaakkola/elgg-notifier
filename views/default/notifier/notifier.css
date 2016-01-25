@@ -19,11 +19,11 @@
 }
 
 #notificationstable td.notifiertogglefield a.notifiertoggleOff {
-	background: transparent url(<?php echo elgg_get_site_url(); ?>_graphics/elgg_sprites.png) no-repeat 25px -72px;
+	background: transparent url(elgg_sprites.png) no-repeat 25px -72px;
 }
 
 #notificationstable td.notifiertogglefield a.notifiertoggleOn {
-	background: transparent url(<?php echo elgg_get_site_url(); ?>_graphics/elgg_sprites.png) no-repeat 25px -54px;
+	background: transparent url(elgg_sprites.png) no-repeat 25px -54px;
 }
 
 /* Style the popup module */
