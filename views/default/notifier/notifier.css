@@ -1,29 +1,27 @@
-
 #notificationstable td.notifiertogglefield {
-	width: 50px;
-	text-align: center;
-	vertical-align: middle;
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
 }
-
 #notificationstable td.notifiertogglefield input {
-	margin-right: 36px;
-	margin-top: 2px;
+    margin-right: 10px;
 }
-
 #notificationstable td.notifiertogglefield a {
-	width: 46px;
-	height: 18px;
-	cursor: pointer;
-	display: block;
-	outline: none;
+    display: inline-block;
+    font-family: 'FontAwesome';
+    font-size: 18px;
+    line-height: 20px;
+	color: #aaa;
+    vertical-align: middle;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-
-#notificationstable td.notifiertogglefield a.notifiertoggleOff {
-	background: transparent url(elgg_sprites.png) no-repeat 25px -72px;
+#notificationstable td.notifiertogglefield a:after {
+    content: "\f0ac";
 }
-
 #notificationstable td.notifiertogglefield a.notifiertoggleOn {
-	background: transparent url(elgg_sprites.png) no-repeat 25px -54px;
+    color: #4690D6;
 }
 
 /* Style the popup module */
