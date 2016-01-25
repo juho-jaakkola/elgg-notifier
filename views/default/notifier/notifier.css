@@ -26,12 +26,72 @@
 
 /* Style the popup module */
 #notifier-popup {
-	width: 345px;
-	position: absolute;
+    padding: 0;
+    background: white;
+    width: 345px;
+	max-width: 100%;
+    position: absolute;
+    font-size: 14px;
+    line-height: normal;
 }
-
-.elgg-notifier-unread {
-	background: #EDF5FF;
+#notifier-popup .elgg-no-results,
+#notifier-popup .elgg-ajax-loader {
+    margin: 0;
+    padding: 8px;
+}
+#notifier-popup .elgg-list-notifier {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 0;
+}
+.elgg-list-notifier > li {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    border-bottom: 1px solid #DCDCDC;
+    margin: 0;
+}
+.elgg-list-notifier > li:last-of-type {
+    border-bottom-width: 0;
+}
+.elgg-list-notifier .elgg-image-block {
+    padding: 8px;
+    transition: background-color 0.5s ease;
+}
+.elgg-list-notifier .elgg-image-block.elgg-notifier-unread {
+    background-color: #EDF5FF;
+}
+.elgg-list-notifier .elgg-image-block:after {
+    content: "";
+}
+#notifier-popup .elgg-foot {
+    border-top: 1px solid #DCDCDC;
+    display: flex;
+    align-items: center;
+}
+#notifier-popup .elgg-foot > div {
+    flex: 0 0 auto;
+    text-align: center;
+    font-size: 12px;
+    min-width: 30px;
+    padding: 4px;
+}
+#notifier-popup .elgg-foot > div:nth-of-type(2) {
+    flex: 1 1 auto;
+}
+#notifier-popup .elgg-foot a {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+#notifier-popup .elgg-foot a.hidden {
+    display: none;
+}
+.elgg-menu-item-notifier > a {
+    position: relative;
+}
+.elgg-menu-item-notifier > a .elgg-icon {
+    font-size: 20px;
 }
 
 /* Count of unread notifications in topbar icon */
@@ -49,10 +109,12 @@
 
 	position: absolute;
 	text-align: center;
-	top: 0px;
-	left: 26px;
+	top: 2px;
+	left: auto;
+	right: -8px;
 	min-width: 16px;
 	height: 16px;
+	line-height: 16px;
 	font-size: 10px;
 	font-weight: bold;
 }
