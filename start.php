@@ -43,6 +43,8 @@ function notifier_init() {
 	elgg_register_action('notifier/clear', $action_path . 'clear.php');
 	elgg_register_action('notifier/delete', $action_path . 'delete.php');
 	elgg_register_action('notifier/load', $action_path . 'load.php');
+
+	elgg_register_plugin_hook_handler('output', 'ajax', 'notifier_ajax_output');
 }
 
 /**
@@ -596,4 +598,18 @@ function notifier_read_group_invitation_notification($event, $type, $object) {
 
 	// Returning true means that the relationship deletion can now proceed
 	return true;
+}
+
+/**
+ * Add unread notifications count to the ajax responses
+ * 
+ * @param string $hook   "output"
+ * @param string $type   "ajax"
+ * @param array  $return Ajax output
+ * @param array  $params Hook params
+ * @return array
+ */
+function notifier_ajax_output($hook, $type, $return, $params) {
+	$return['counters']['notifier'] = (int) notifier_count_unread();
+	return $return;
 }

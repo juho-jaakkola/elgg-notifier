@@ -6,7 +6,6 @@
 define(function (require) {
 	var $ = require('jquery');
 	var elgg = require('elgg');
-	var spinner = require('elgg/spinner');
 
 	/**
 	 * Repositions the notifier popup
@@ -48,26 +47,10 @@ define(function (require) {
 		// start delete on server but don't block
 		elgg.action(this.href);
 
-		// Remove notification count from topbar icon
-		$('#notifier-new').remove();
+		// Update count
+		updateUnreadCount(0);
 
-		// Remove highlighting from the unread notifications one by one
-		function dismiss() {
-			var $unread = $('.elgg-notifier-unread:first');
-			if ($unread.length) {
-				$unread.removeClass('elgg-notifier-unread');
-			} else {
-				clearInterval(dismissing);
-				// close popup
-				$('body').trigger('click');
-			}
-		}
-
-		var dismissing = setInterval(dismiss, 100);
-		dismiss();
-
-		// Fade and remove "Dismiss all" button
-		$('#notifier-dismiss-all').fadeOut().remove();
+		$('.elgg-notifier-unread').removeClass('elgg-notifier-unread');
 
 		return false;
 	}
@@ -103,20 +86,32 @@ define(function (require) {
 					$('#notifier-view-all').addClass('hidden');
 				}
 
-				// Toggle the "Dismiss all" icon
-				if (response.output.unread > 0) {
-					$('#notifier-dismiss-all').removeClass('hidden');
-					$('#notifier-new').text(response.output.unread).removeClass('hidden');
-				} else {
-					$('#notifier-dismiss-all').addClass('hidden');
-					$('#notifier-new').text(response.output.unread).addClass('hidden');
-				}
+				updateUnreadCount(response.output.unread);
 
 				// Bind lightbox to the new links
 				elgg.ui.lightbox.bind(".elgg-lightbox");
 			}
 		});
 	}
+
+	function updateUnreadCount(unread) {
+		console.log(unread);
+		// Toggle the "Dismiss all" icon
+		if (unread > 0) {
+			$('#notifier-dismiss-all').removeClass('hidden');
+			$('#notifier-new').text(unread).removeClass('hidden');
+		} else {
+			$('#notifier-dismiss-all').addClass('hidden');
+			$('#notifier-new').text(unread).addClass('hidden');
+		}
+	}
+
+	$(document).ajaxSuccess(function (event, xhr, settings) {
+		if (typeof xhr.responseJSON !== 'undefined' && xhr.responseJSON.counters) {
+			console.log(xhr.responseJSON.counters);
+			updateUnreadCount(xhr.responseJSON.counters.notifier || 0);
+		}
+	});
 
 	$('#notifier-dismiss-all').on('click', dismissAll);
 
