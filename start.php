@@ -1,10 +1,10 @@
 <?php
+
 /**
  * Notifier
  *
  * @package Notifier
  */
-
 elgg_register_event_handler('init', 'system', 'notifier_init');
 
 /**
@@ -12,22 +12,16 @@ elgg_register_event_handler('init', 'system', 'notifier_init');
  *
  * @return void
  */
-function notifier_init () {
+function notifier_init() {
 	notifier_set_view_listener();
 
 	// Add hidden popup module to topbar
 	elgg_extend_view('page/elements/topbar', 'notifier/popup');
 
-	elgg_require_js('notifier/notifier');
-
-	// Must always have lightbox loaded because views needing it come via AJAX
-	elgg_load_js('lightbox');
-	elgg_load_css('lightbox');
-
 	elgg_register_page_handler('notifier', 'notifier_page_handler');
 
 	// Add css
-	elgg_extend_view('css/elgg', 'notifier/css');
+	elgg_extend_view('elgg.css', 'notifier/notifier.css');
 
 	elgg_register_notification_method('notifier');
 	elgg_register_plugin_hook_handler('send', 'notification:notifier', 'notifier_notification_send');
@@ -48,6 +42,7 @@ function notifier_init () {
 	elgg_register_action('notifier/dismiss', $action_path . 'dismiss.php');
 	elgg_register_action('notifier/clear', $action_path . 'clear.php');
 	elgg_register_action('notifier/delete', $action_path . 'delete.php');
+	elgg_register_action('notifier/load', $action_path . 'load.php');
 }
 
 /**
@@ -61,39 +56,33 @@ function notifier_init () {
  * @param array          $params Hook parameters
  * @return ElggMenuItem[] $return
  */
-function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
-	if (elgg_is_logged_in()) {
-		// Get amount of unread notifications
-		$count = (int)notifier_count_unread();
-
-		$text = elgg_view_icon('attention');
-		$tooltip = elgg_echo("notifier:unreadcount", array($count));
-
-		if ($count > 0) {
-			if ($count > 99) {
-				// Don't allow the counter to grow endlessly
-				$count = '99+';
-			}
-			$hidden = '';
-		} else {
-			$hidden = 'class="hidden"';
-		}
-
-		$text .= "<span id=\"notifier-new\" $hidden>$count</span>";
-
-		$item = ElggMenuItem::factory(array(
-			'name' => 'notifier',
-			'href' => '#notifier-popup',
-			'text' => $text,
-			'priority' => 600,
-			'title' => $tooltip,
-			'rel' => 'popup',
-			'id' => 'notifier-popup-link'
-		));
-
-		$return[] = $item;
+function notifier_topbar_menu_setup($hook, $type, $return, $params) {
+	if (!elgg_is_logged_in()) {
+		return;
 	}
 
+	$count = (int) notifier_count_unread();
+	if ($count > 99) {
+		$count = '99+';
+	}
+
+	$text = elgg_view_icon('globe');
+	$counter = elgg_format_element('span', [
+		'id' => 'notifier-new',
+		'class' => $count ? '' : 'hidden',
+			], $count);
+
+	$item = ElggMenuItem::factory(array(
+				'name' => 'notifier',
+				'href' => '#notifier-popup',
+				'text' => $text . $counter,
+				'priority' => 600,
+				'tooltip' => elgg_echo('notifier:unreadcount', array($count)),
+				'rel' => 'popup',
+				'id' => 'notifier-popup-link'
+	));
+
+	$return[] = $item;
 	return $return;
 }
 
@@ -230,11 +219,28 @@ function notifier_notification_send($hook, $type, $result, $params) {
 }
 
 /**
+ * Count all notifications
+ * @return int
+ */
+function notifier_count_all() {
+	return elgg_get_entities_from_metadata(array(
+		'type' => 'object',
+		'subtype' => 'notification',
+		'owner_guid' => (int) elgg_get_logged_in_user_guid(),
+		'order_by_metadata' => array(
+			'name' => 'status',
+			'direction' => 'DESC'
+		),
+		'count' => true,
+	));
+}
+
+/**
  * Get the count of all unread notifications
  *
  * @return integer
  */
-function notifier_count_unread () {
+function notifier_count_unread() {
 	return notifier_get_unread(array('count' => true));
 }
 
@@ -244,7 +250,7 @@ function notifier_count_unread () {
  * @param array $options Options passed to elgg_get_entities_from_metadata
  * @return ElggNotification[]
  */
-function notifier_get_unread ($options = array()) {
+function notifier_get_unread($options = array()) {
 	$defaults = array(
 		'type' => 'object',
 		'subtype' => 'notification',
@@ -270,7 +276,7 @@ function notifier_get_unread ($options = array()) {
  * @param array  $params Array containing the time when cron was triggered
  * @return void
  */
-function notifier_cron ($hook, $type, $return, $params) {
+function notifier_cron($hook, $type, $return, $params) {
 	// One week ago
 	$time = time() - 60 * 60 * 24 * 7;
 
@@ -305,7 +311,7 @@ function notifier_cron ($hook, $type, $return, $params) {
  *
  * @return void
  */
-function notifier_set_view_listener () {
+function notifier_set_view_listener() {
 	$dbprefix = elgg_get_config('dbprefix');
 	$types = get_data("SELECT * FROM {$dbprefix}entity_subtypes");
 
@@ -343,7 +349,7 @@ function notifier_set_view_listener () {
  * @param ElggUser $user  The user that was created
  * @return boolean
  */
-function notifier_enable_for_new_user ($event, $type, $user) {
+function notifier_enable_for_new_user($event, $type, $user) {
 	$personal = (boolean) elgg_get_plugin_setting('enable_personal', 'notifier');
 	$collections = (boolean) elgg_get_plugin_setting('enable_collections', 'notifier');
 
@@ -373,7 +379,7 @@ function notifier_enable_for_new_user ($event, $type, $user) {
  * @param string $type   'group'
  * @param array  $params Array containing ElggUser and ElggGroup
  */
-function notifier_enable_for_new_group_member ($event, $type, $params) {
+function notifier_enable_for_new_group_member($event, $type, $params) {
 	$group = $params['group'];
 	$user = $params['user'];
 
@@ -443,7 +449,7 @@ function notifier_get_similar($event_name, $entity, $recipient) {
  * @param array  $params This is empty
  * @return void
  */
-function notifier_read_friends_notification ($hook, $type, $return, $params) {
+function notifier_read_friends_notification($hook, $type, $return, $params) {
 	// Get unread notifications that match the friending event
 	$options = array(
 		'metadata_name_value_pairs' => array(
@@ -471,7 +477,7 @@ function notifier_read_friends_notification ($hook, $type, $return, $params) {
  * @param ElggRelationship $object The created relationships
  * @return boolean Always returns true
  */
-function notifier_relationship_notifications ($event, $type, $object) {
+function notifier_relationship_notifications($event, $type, $object) {
 	$guid_one = $object->guid_one;
 	$guid_two = $object->guid_two;
 	$relationship = $object->relationship;

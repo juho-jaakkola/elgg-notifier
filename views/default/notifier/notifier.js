@@ -3,9 +3,10 @@
 /**
  * Javascript for the notifier plugin
  */
-define(function(require) {
+define(function (require) {
 	var $ = require('jquery');
 	var elgg = require('elgg');
+	var spinner = require('elgg/spinner');
 
 	/**
 	 * Repositions the notifier popup
@@ -33,8 +34,8 @@ define(function(require) {
 		populatePopup();
 
 		options.my = 'left top';
-		options.at = 'left bottom';
-		options.collision = 'fit none';
+		options.at = 'left bottom+5px';
+		options.collision = 'fit fit';
 		return options;
 	}
 
@@ -77,42 +78,42 @@ define(function(require) {
 	 * @return void
 	 */
 	function populatePopup() {
-		$('#notifier-popup > .elgg-body > ul').html('<li><div class="elgg-ajax-loader mtm mbm"></div></li>');
+		var $loader = $('<div>').addClass('elgg-ajax-loader');
 
-		elgg.get('notifier/popup', {
-			success: function(output) {
-				if (output) {
-					// Add the received <li> elements into the list
-					$('#notifier-popup > .elgg-body > ul').html(output);
+		elgg.action('notifier/load', {
+			beforeSend: function () {
+				$('#notifier-messages').html($loader);
+			},
+			complete: function () {
+				$loader.remove();
+			},
+			success: function (response) {
 
-					// Hide the "No notifications" texts
-					$('.notifier-none').addClass('hidden');
-
-					// Display the "View all" link
-					$('#notifier-view-all').removeClass('hidden');
-
-					// Check if there are unread notifications
-					if ($('.elgg-notifier-unread').length) {
-						// Display the "Dismiss all" icon
-						$('#notifier-dismiss-all').removeClass('hidden');
-					}
-
-					// Check if there are links that trigger a lightbox
-					$('#notifier-popup .elgg-lightbox').each(function() {
-						// Bind lightbox to the new links
-						elgg.ui.lightbox.bind(".elgg-lightbox");
-						return false;
-					});
-				} else {
-					// remove the spinner
-					$('#notifier-popup > .elgg-body > ul').html('');
-
-					// Hide the "Dismiss all" icon & the "View all" link
-					$('#notifier-dismiss-all, #notifier-view-all').addClass('hidden');
-
-					// Display the "No notifications" text
-					$('.notifier-none').removeClass('hidden');
+				if (response.status !== 0) {
+					return;
 				}
+
+				// Populate the list
+				$('#notifier-messages').html(response.output.list);
+
+				// Toggle the "View all" link
+				if (response.output.count > 0) {
+					$('#notifier-view-all').removeClass('hidden');
+				} else {
+					$('#notifier-view-all').addClass('hidden');
+				}
+
+				// Toggle the "Dismiss all" icon
+				if (response.output.unread > 0) {
+					$('#notifier-dismiss-all').removeClass('hidden');
+					$('#notifier-new').text(response.output.unread).removeClass('hidden');
+				} else {
+					$('#notifier-dismiss-all').addClass('hidden');
+					$('#notifier-new').text(response.output.unread).addClass('hidden');
+				}
+
+				// Bind lightbox to the new links
+				elgg.ui.lightbox.bind(".elgg-lightbox");
 			}
 		});
 	}
