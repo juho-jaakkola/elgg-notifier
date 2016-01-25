@@ -59,38 +59,32 @@ function notifier_init () {
  * @return ElggMenuItem[] $return
  */
 function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
-	if (elgg_is_logged_in()) {
-		// Get amount of unread notifications
-		$count = (int)notifier_count_unread();
-
-		$text = elgg_view_icon('attention');
-		$tooltip = elgg_echo("notifier:unreadcount", array($count));
-
-		if ($count > 0) {
-			if ($count > 99) {
-				// Don't allow the counter to grow endlessly
-				$count = '99+';
-			}
-			$hidden = '';
-		} else {
-			$hidden = 'class="hidden"';
-		}
-
-		$text .= "<span id=\"notifier-new\" $hidden>$count</span>";
-
-		$item = ElggMenuItem::factory(array(
-			'name' => 'notifier',
-			'href' => '#notifier-popup',
-			'text' => $text,
-			'priority' => 600,
-			'title' => $tooltip,
-			'rel' => 'popup',
-			'id' => 'notifier-popup-link'
-		));
-
-		$return[] = $item;
+	if (!elgg_is_logged_in()) {
+		return;
 	}
 
+	$count = (int) notifier_count_unread();
+	if ($count > 99) {
+		$count = '99+';
+	}
+
+	$text = elgg_view_icon('globe');
+	$counter = elgg_format_element('span', [
+		'id' => 'notifier-new',
+		'class' => $count ? '' : 'hidden',
+			], $count);
+
+	$item = ElggMenuItem::factory(array(
+				'name' => 'notifier',
+				'href' => '#notifier-popup',
+				'text' => $text . $counter,
+				'priority' => 600,
+				'tooltip' => elgg_echo('notifier:unreadcount', array($count)),
+				'rel' => 'popup',
+				'id' => 'notifier-popup-link'
+	));
+
+	$return[] = $item;
 	return $return;
 }
 
