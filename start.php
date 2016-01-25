@@ -42,6 +42,7 @@ function notifier_init () {
 	elgg_register_action('notifier/dismiss', $action_path . 'dismiss.php');
 	elgg_register_action('notifier/clear', $action_path . 'clear.php');
 	elgg_register_action('notifier/delete', $action_path . 'delete.php');
+	elgg_register_action('notifier/load', $action_path . 'load.php');
 }
 
 /**
@@ -232,6 +233,23 @@ function notifier_notification_send($hook, $type, $result, $params) {
  */
 function notifier_count_unread () {
 	return notifier_get_unread(array('count' => true));
+}
+
+/**
+ * Count all notifications
+ * @return int
+ */
+function notifier_count_all() {
+	return elgg_get_entities_from_metadata(array(
+		'type' => 'object',
+		'subtype' => 'notification',
+		'owner_guid' => (int) elgg_get_logged_in_user_guid(),
+		'order_by_metadata' => array(
+			'name' => 'status',
+			'direction' => 'DESC'
+		),
+		'count' => true,
+	));
 }
 
 /**
