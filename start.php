@@ -104,33 +104,30 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
  *  All notifications:          notifier/all
  *  Subjects of a notification: notifier/subjects/<notification guid>
  *
- * @param array $page Array of URL segments
+ * @param array $segments Array of URL segments
  * @return bool Was the page handled successfully
  */
-function notifier_page_handler ($page) {
+function notifier_page_handler($segments) {
 	gatekeeper();
 
-	if (empty($page[0])) {
-		$page[0] = 'all';
-	}
+	$page = array_shift($segments);
 
-	$path = elgg_get_plugins_path() . 'notifier/pages/notifier/';
-
-	switch ($page[0]) {
+	switch ($page) {
+		default :
+		case 'all' :
 		case 'popup':
-			include_once($path . 'popup.php');
-			break;
+			echo elgg_view_resource('notifier/list');
+			return true;
+
 		case 'subjects':
-			set_input('guid', $page[1]);
-			include_once($path . 'subjects.php');
-			break;
-		case 'all':
-		default:
-			include_once($path . 'list.php');
-			break;
+			$guid = array_shift($segments);
+			echo elgg_view_resource('notifier/subjects', array(
+				'guid' => $guid,
+			));
+			return true;
 	}
 
-	return true;
+	return false;
 }
 
 /**

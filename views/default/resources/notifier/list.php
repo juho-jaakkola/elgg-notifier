@@ -1,7 +1,11 @@
 <?php
-/**
- * Display a list of all notifications
- */
+
+$list = elgg_view('lists/notifications');
+
+if (elgg_is_xhr()) {
+	echo $list;
+	return;
+}
 
 // Link to notification settings
 elgg_register_menu_item('title', array(
@@ -31,31 +35,9 @@ elgg_register_menu_item('title', array(
 ));
 
 $params = array();
-
 $params['title'] = elgg_echo('notifier:all');
 $params['filter'] = '';
-
-$notifications = elgg_list_entities_from_metadata(array(
-	'type' => 'object',
-	'subtype' => 'notification',
-	'limit' => 20,
-	'owner_guid' => elgg_get_logged_in_user_guid(),
-	'full_view' => false,
-	'order_by_metadata' => array(
-		'name' => 'status',
-		'direction' => 'DESC'
-	),
-	'list_class' => 'elgg-list-notifier',
-));
-
-if ($notifications) {
-	$params['content'] = $notifications;
-} else {
-	$none_text = elgg_echo('notifier:none');
-	$content = "<span class=\"notifier-none\">$none_text</span><ul class=\"elgg-list elgg-list-notifier\"></ul>";
-
-	$params['content'] = $content;
-}
+$params['content'] = $list;
 
 $body = elgg_view_layout('content', $params);
 echo elgg_view_page($params['title'], $body);
