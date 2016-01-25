@@ -1,0 +1,121 @@
+#notifier-popup {
+    padding: 0;
+    background: white;
+    width: 345px;
+    position: absolute;
+    font-size: 14px;
+    line-height: normal;
+}
+#notifier-popup .elgg-no-results,
+#notifier-popup .elgg-ajax-loader {
+    margin: 0;
+    padding: 8px;
+}
+#notifier-popup .elgg-list-notifier {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 0;
+}
+.elgg-list-notifier > li {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    border-bottom: 1px solid #dcdcdc;
+    margin: 0;
+}
+.elgg-list-notifier > li:last-of-type {
+    border-bottom-width: 0;
+}
+.elgg-list-notifier .elgg-image-block {
+    padding: 8px;
+    transition: background-color 0.5s ease;
+}
+.elgg-list-notifier .elgg-image-block.elgg-notifier-unread {
+    background-color: rgba(237,239,245,.98)
+}
+.elgg-list-notifier .elgg-image-block:after {
+    content: "";
+}
+#notifier-popup .elgg-foot {
+    border-top: 1px solid #dcdcdc;
+    display: flex;
+    align-items: center;
+}
+#notifier-popup .elgg-foot > div {
+    flex: 0 0 auto;
+    text-align: center;
+    font-size: 12px;
+    min-width: 30px;
+    padding: 4px;
+}
+#notifier-popup .elgg-foot > div:nth-of-type(2) {
+    flex: 1 1 auto;
+}
+#notifier-popup .elgg-foot a {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+#notifier-popup .elgg-foot a.hidden {
+    display: none;
+}
+.elgg-menu-item-notifier > a {
+    position: relative;
+}
+.elgg-menu-item-notifier > a .elgg-icon {
+    font-size: 20px;
+}
+#notifier-new {
+    color: white;
+    background-color: red;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    position: absolute;
+    text-align: center;
+    top: 2px;
+    left: auto;
+    right: -8px;
+    min-width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Lightbox */
+.notifier-lightbox-wrapper {
+    width: 570px;
+    min-height: 410px;
+    margin: 20px 15px;
+}
+#notificationstable td.notifiertogglefield {
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
+}
+#notificationstable td.notifiertogglefield input {
+    margin-right: 10px;
+}
+#notificationstable td.notifiertogglefield a {
+    display: inline-block;
+    font-family: 'FontAwesome';
+    font-size: 18px;
+    line-height: 20px;
+    vertical-align: middle;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+#notificationstable td.notifiertogglefield a:after {
+    content: "\f0ac";
+}
+#notificationstable td.notifiertogglefield a.notifiertoggleOff {
+    color: #cccccc;
+}
+#notificationstable td.notifiertogglefield a.notifiertoggleOn {
+    color: #4690D6;
+}
