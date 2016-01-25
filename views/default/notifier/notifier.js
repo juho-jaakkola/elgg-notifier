@@ -113,6 +113,12 @@ define(function (require) {
 		}
 	}
 
+	$(document).ajaxSuccess(function (event, xhr, settings) {
+		if (typeof xhr.responseJSON !== 'undefined' && xhr.responseJSON.notifier) {
+			updateUnreadCount(xhr.responseJSON.notifier.unread || 0);
+		}
+	});
+
 	$('#notifier-dismiss-all').on('click', dismissAll);
 
 	elgg.register_hook_handler('getOptions', 'ui.popup', popupHandler);
