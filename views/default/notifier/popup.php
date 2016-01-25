@@ -1,48 +1,59 @@
 <?php
+
 /**
  * Create an empty popup module to be populated on demand via XHR request.
  */
 
-$dismiss_link = elgg_view('output/url', array(
+if (!elgg_is_logged_in) {
+	return;
+}
+
+elgg_require_js('notifier/notifier');
+
+// Must always have lightbox loaded because views needing it come via AJAX
+elgg_load_js('lightbox');
+elgg_load_css('lightbox');
+
+$list = elgg_format_element('div', [
+	'id' => 'notifier-messages'
+		]);
+
+$links = array();
+
+$links[] = elgg_view('output/url', array(
 	'href' => 'action/notifier/dismiss',
-	'text' => elgg_view_icon('checkmark'),
+	'text' => elgg_view_icon('check-square-o'),
 	'title' => elgg_echo('notifier:dismiss_all'),
-	'class' => 'float-alt',
 	'id' => 'notifier-dismiss-all',
+	'class' => 'hidden',
 	'is_action' => true,
 	'is_trusted' => true,
-));
+		));
 
-$title = elgg_echo('notifier:notifications');
-$header = "<h3 class=\"float\">$title</h3>$dismiss_link";
-
-$list = '<ul class="elgg-list elgg-list-entity elgg-list-notifier"></ul>';
-
-$none_text = elgg_echo('notifier:none');
-$none = "<span class=\"notifier-none\">$none_text</span>";
-
-// Link to all notifications
-$show_all_link = elgg_view('output/url', array(
+$links[] = elgg_view('output/url', array(
 	'href' => 'notifier/all',
 	'text' => elgg_echo('notifier:view:all'),
-	'class' => 'float',
 	'id' => 'notifier-view-all',
+	'class' => 'hidden',
 	'is_trusted' => true,
-));
+		));
 
-$settings_link = elgg_view('output/url', array(
+$links[] = elgg_view('output/url', array(
 	'href' => 'notifications/personal',
-	'text' => elgg_echo('settings'),
-	'class' => 'float-alt',
+	'text' => elgg_view_icon('cog'),
+	'title' => elgg_echo('settings'),
 	'is_trusted' => true,
-));
+		));
 
-$body = $list . $none . $show_all_link . $settings_link;
+$buttonbank = '';
+foreach ($links as $link) {
+	$buttonbank .= elgg_format_element('div', [], $link);
+}
 
-$vars = array(
-	'class' => 'hidden elgg-notifier-popup',
-	'id' => 'notifier-popup',
-	'header' => $header
-);
+$footer = elgg_format_element('div', ['class' => 'elgg-foot'], $buttonbank);
+$body = $list . $footer;
 
-echo elgg_view_module('popup', '', $body, $vars);
+echo elgg_format_element('div', [
+	'class' => 'elgg-module elgg-module-popup elgg-notifier-popup hidden',
+	'id' => 'notifier-popup'
+		], $body);

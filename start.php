@@ -18,12 +18,6 @@ function notifier_init () {
 	// Add hidden popup module to topbar
 	elgg_extend_view('page/elements/topbar', 'notifier/popup');
 
-	elgg_require_js('notifier/notifier');
-
-	// Must always have lightbox loaded because views needing it come via AJAX
-	elgg_load_js('lightbox');
-	elgg_load_css('lightbox');
-
 	elgg_register_page_handler('notifier', 'notifier_page_handler');
 
 	// Add css
