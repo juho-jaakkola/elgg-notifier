@@ -114,19 +114,18 @@ function notifier_page_handler ($page) {
 		$page[0] = 'all';
 	}
 
-	$path = elgg_get_plugins_path() . 'notifier/pages/notifier/';
-
 	switch ($page[0]) {
 		case 'popup':
-			include_once($path . 'popup.php');
+			echo elgg_view_resource('notifier/popup');
 			break;
 		case 'subjects':
-			set_input('guid', $page[1]);
-			include_once($path . 'subjects.php');
+			echo elgg_view_resource('notifier/subjects', array(
+				'guid' => $page[1],
+			));
 			break;
 		case 'all':
 		default:
-			include_once($path . 'list.php');
+			echo elgg_view_resource('notifier/list');
 			break;
 	}
 

@@ -3,7 +3,8 @@
  * Display a list of notification subjects
  */
 
-$notification = get_entity(get_input('guid'));
+$guid = elgg_extract('guid', $vars);
+$notification = get_entity($guid);
 
 if ($notification) {
 	$content = elgg_view_entity_list($notification->getSubjects());
