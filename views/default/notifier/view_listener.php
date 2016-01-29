@@ -29,11 +29,11 @@ if (elgg_in_context('profile')) {
 		'value' => 'create:relationship:friend'
 	);
 } else {
-	$options['relationship_guid'] = (get_input('entity_guid')) ? (get_input('entity_guid')) : ($vars['entity']->guid);
+	$options['relationship_guid'] = (get_input('entity_guid')) ? get_input('entity_guid') : $vars['entity']->guid;
 }
 
 // Thewire doesn't have a full view so override the full_view check
-if ($vars['entity'] && $vars['entity']->getSubtype() == 'thewire') {
+if ($vars['entity'] && in_array($vars['entity']->getSubtype(), array('thewire', 'comment', 'discussion_reply'))) {
 	$override = true;
 }
 
