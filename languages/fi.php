@@ -54,14 +54,4 @@ return array(
 	'groups:notifications:invitation:hidden' => 'Sinulla on uusi %s henkilöltä %s',
 	'groups:notifications:membership_request' => '%s on anonut jäsenyyttä ryhmään %s',
 	'groups:invitation' => 'ryhmäkutsu',
-
-	// Plugin settings
-	'notifier:settings:desc' => 'Oletusasetukset uusille käyttäjille',
-	'notifier:settings:enable_personal' => 'Henkilökohtaiset ilmoitukset',
-	'notifier:settings:enable_personal:desc' => 'Käyttäjä saa ilmoituksen, kun joku suorittaa toiminnon (tykkäys, kommentointi, tms) hänen luomalleen sisällölle.',
-	'notifier:settings:enable_collections' => 'Ilmoitukset ystävien toiminnasta',
-	'notifier:settings:enable_collections:desc' => 'Käyttäjä saa ilmoituksen, kun joku hänen ystävistään luo uutta sisältöä.',
-	'notifier:settings:groups:desc' => 'Oletusasetukset ryhmien uusille jäsenille',
-	'notifier:settings:enable_groups' => 'Ryhmien ilmoitukset',
-	'notifier:settings:enable_groups:desc' => 'Käyttäjä saa ilmoituksen, kun joku lisää uutta sisältöä ryhmään, jossa hän on jäsenenä.',
 );

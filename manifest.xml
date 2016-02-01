@@ -15,4 +15,8 @@
 		<type>plugin</type>
 		<name>notifications</name>
 	</requires>
+	<suggests>
+		<type>plugin</type>
+		<name>notification_tools</name>
+	</suggests>
 </plugin_manifest>

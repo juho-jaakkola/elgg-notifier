@@ -54,14 +54,4 @@ return array(
 	'groups:notifications:invitation:hidden' => 'You have a new %s from %s',
 	'groups:notifications:membership_request' => '%s has requested membership in group %s',
 	'groups:invitation' => 'group invitation',
-
-	// Plugin settings
-	'notifier:settings:desc' => 'Default notification settings for new users',
-	'notifier:settings:enable_personal' => 'Personal notifications',
-	'notifier:settings:enable_personal:desc' => "A notification is added when an action (comment, like, etc.) is performed on user's content.",
-	'notifier:settings:enable_collections' => 'Friends',
-	'notifier:settings:enable_collections:desc' => "A notification is added when any of user's friends create new content.",
-	'notifier:settings:groups:desc' => 'Default notification setting for new group members',
-	'notifier:settings:enable_groups' => 'Group notifications',
-	'notifier:settings:enable_groups:desc' => 'A notification is added when new content is added to a group that the user is a member of.',
 );
