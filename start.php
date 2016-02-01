@@ -241,6 +241,20 @@ function notifier_count_unread () {
 }
 
 /**
+ * Count all notifications
+ *
+ * @return int
+ */
+function notifier_count_all() {
+	return elgg_get_entities_from_metadata(array(
+		'type' => 'object',
+		'subtype' => 'notification',
+		'owner_guid' => (int) elgg_get_logged_in_user_guid(),
+		'count' => true,
+	));
+}
+
+/**
  * Get all unread messages for logged in users
  *
  * @param array $options Options passed to elgg_get_entities_from_metadata
