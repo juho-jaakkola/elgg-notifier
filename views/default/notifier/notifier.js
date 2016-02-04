@@ -48,7 +48,7 @@ define(function(require) {
 		elgg.action(this.href);
 
 		// Hide notification count from topbar icon
-		$('#notifier-new').addClass('hidden');
+		$('#notifier-new').addClass('hidden').html('');
 
 		// Remove highlighting from the unread notifications one by one
 		function dismiss() {
