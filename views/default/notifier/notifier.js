@@ -39,7 +39,7 @@ define(function(require) {
 	}
 
 	/**
-	 * Dismiss all unread notifications and then remove related UI elements.
+	 * Dismiss all unread notifications and then hide related UI elements.
 	 *
 	 * @return void
 	 */
@@ -47,8 +47,8 @@ define(function(require) {
 		// start delete on server but don't block
 		elgg.action(this.href);
 
-		// Remove notification count from topbar icon
-		$('#notifier-new').remove();
+		// Hide notification count from topbar icon
+		$('#notifier-new').addClass('hidden');
 
 		// Remove highlighting from the unread notifications one by one
 		function dismiss() {
@@ -65,8 +65,8 @@ define(function(require) {
 		var dismissing = setInterval(dismiss, 100);
 		dismiss();
 
-		// Fade and remove "Dismiss all" button
-		$('#notifier-dismiss-all').fadeOut().remove();
+		// Hide the "Dismiss all" button
+		$('#notifier-dismiss-all').addClass('hidden');
 
 		return false;
 	}
