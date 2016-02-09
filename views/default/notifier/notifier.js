@@ -117,7 +117,23 @@ define(function(require) {
 		});
 	}
 
+	/**
+	 * Dismiss single notification on click
+	 * @returns {void}
+	 */
+	function dismissOne() {
+		var id = $(this).closest('.elgg-item-object-notification').attr('id');
+		var guid = id.substr(id.indexOf('elgg-object-') + "elgg-object-".length);
+		elgg.action('action/notifier/dismiss_one', {
+			data: {
+				guid: guid,
+			}
+		});
+	};
+
 	$('#notifier-dismiss-all').on('click', dismissAll);
 
+	$(document).on('click', '.elgg-item-object-notification:has(.elgg-notifier-unread) a', dismissOne);
+	
 	elgg.register_hook_handler('getOptions', 'ui.popup', popupHandler);
 });

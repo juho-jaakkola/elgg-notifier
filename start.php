@@ -46,6 +46,7 @@ function notifier_init () {
 
 	$action_path = elgg_get_plugins_path() . 'notifier/actions/notifier/';
 	elgg_register_action('notifier/dismiss', $action_path . 'dismiss.php');
+	elgg_register_action('notifier/dismiss_one', $action_path . 'dismiss_one.php');
 	elgg_register_action('notifier/clear', $action_path . 'clear.php');
 	elgg_register_action('notifier/delete', $action_path . 'delete.php');
 }
