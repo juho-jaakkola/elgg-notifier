@@ -202,14 +202,14 @@ function notifier_notification_send($hook, $type, $result, $params) {
 	}
 
 	// If the river string is not available, fall back to summary or subject
-	if ($string == elgg_echo($string)) {
-		if ($notification->summary) {
-			$string = $notification->summary;
-		} else {
-			$string = $notification->subject;
-		}
+	if ($notification->summary) {
+		$string = $notification->summary;
+	} else if (elgg_language_key_exists($string)) {
+		$string = elgg_echo($string);
+	} else {
+		$string = $notification->subject;
 	}
-
+	
 	$note = new ElggNotification();
 	$note->title = $string;
 	$note->owner_guid = $recipient->getGUID();
