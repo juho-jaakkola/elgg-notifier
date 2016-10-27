@@ -161,6 +161,8 @@ function notifier_notification_send($hook, $type, $result, $params) {
 	$string = "river:{$action}:{$object->getType()}:{$object->getSubtype()}";
 	$recipient = $notification->getRecipient();
 	$actor = $event->getActor();
+	$description = $event->getDescription();
+
 	switch ($object->getType()) {
 		case 'annotation':
 			// Get the entity that was annotated
@@ -168,6 +170,18 @@ function notifier_notification_send($hook, $type, $result, $params) {
 			break;
 		case 'relationship':
 			$entity = get_entity($object->guid_two);
+			break;
+		case 'user':
+			if ($action == 'add_friend') {
+				// The recipient is also the object (the one being added as a friend)
+				$entity = $recipient;
+
+				// Change action from default "add_friend:user" so
+				// that it will get automatically mapped to the
+				// 'notifier/messages/create/relationship/friend' view.
+				$description = 'create:relationship:friend';
+			}
+
 			break;
 		default:
 			if ($object instanceof ElggComment) {
@@ -187,9 +201,12 @@ function notifier_notification_send($hook, $type, $result, $params) {
 			}
 	}
 
-	if ($object->getType() == 'annotation' || $object->getType() == 'relationship' || ($object instanceof ElggComment && $action == 'create')) {
+	if ($object->getType() == 'annotation' ||
+		$object->getType() == 'relationship' ||
+		($object instanceof ElggComment && $action == 'create') ||
+		$action == 'add_friend') {
 		// Check if similar notification already exists
-		$existing = notifier_get_similar($event->getDescription(), $entity, $recipient);
+		$existing = notifier_get_similar($description, $entity, $recipient);
 		if ($existing) {
 			// Update the existing notification
 			$existing->setSubject($actor);
@@ -215,7 +232,7 @@ function notifier_notification_send($hook, $type, $result, $params) {
 	$note->title = $string;
 	$note->owner_guid = $recipient->getGUID();
 	$note->container_guid = $recipient->getGUID();
-	$note->event = $event->getDescription();
+	$note->event = $description;
 	// The notification may be being created later than the event took
 	// place, so use the original time_created instead of time()
 	$note->time_created = $object->time_created;
@@ -494,13 +511,6 @@ function notifier_relationship_notifications ($event, $type, $object) {
 	$relationship = $object->relationship;
 
 	switch ($relationship) {
-		case 'friend':
-			// Notification about a new friend
-			$actor = get_user($guid_one);
-			$recipient = get_user($guid_two);
-			$target = $recipient;
-			$string = 'friend:notifications:summary';
-			break;
 		case 'invited':
 			// Notification about a group membership invitation
 			$actor = elgg_get_logged_in_user_entity(); // User who invited
