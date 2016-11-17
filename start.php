@@ -21,7 +21,7 @@ function notifier_init () {
 	elgg_require_js('notifier/notifier');
 
 	// Must always have lightbox loaded because views needing it come via AJAX
-	elgg_load_js('lightbox');
+	elgg_require_js('elgg/lightbox');
 	elgg_load_css('lightbox');
 
 	elgg_register_page_handler('notifier', 'notifier_page_handler');
