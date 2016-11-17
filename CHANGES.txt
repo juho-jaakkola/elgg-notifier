@@ -1,3 +1,16 @@
+Version 1.11.0 (2016-11-17)
+
+ Features:
+  * Adds custom notification next for The Wire posts
+  * Replaces 'attention' icon with 'globe' icon in the topbar
+  * Removes plugin settings and suggests notification_tools as replacement
+  * Unread items arw now always dismissed on click
+  * Add dutch language file
+
+ Fixes:
+  * Fixes the notifier icon in the notification settings page
+  * Friend notifications get combined into a single notification again
+
 Version 1.10.1 (2015-12-16)
 
  Features:
