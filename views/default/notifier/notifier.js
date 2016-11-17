@@ -96,13 +96,6 @@ define(function(require) {
 						// Display the "Dismiss all" icon
 						$('#notifier-dismiss-all').removeClass('hidden');
 					}
-
-					// Check if there are links that trigger a lightbox
-					$('#notifier-popup .elgg-lightbox').each(function() {
-						// Bind lightbox to the new links
-						elgg.ui.lightbox.bind(".elgg-lightbox");
-						return false;
-					});
 				} else {
 					// remove the spinner
 					$('#notifier-popup > .elgg-body > ul').html('');
