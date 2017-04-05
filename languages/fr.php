@@ -6,7 +6,7 @@ return array(
 	'notifier:notifications' => "Notifications",
 	'notifier:view:all' => "Voir toutes les notifications",
 	'notifier:all' => "Toutes les notifications",
-	'notifier:none' => "Pas notifications",
+	'notifier:none' => "Pas de notifications",
 	'notifier:unreadcount' => "Notifications non lues (%s)",
 	'notification:method:notifier' => "Notifier",
 	'notifier:dismiss_all' => "Rejeter la totalité",
@@ -30,23 +30,23 @@ return array(
 	'river:mention:object:comment' => "%s vous a mentionné dans %s",
 
 	// This is used to create messages like "Lisa and George aiment votre post"
-	'notifier:two_subjects' => "%s and %s",
+	'notifier:two_subjects' => "%s et %s",
 	// This is used to create messages like "Lisa and 5 autres aiment votre post"
-	'notifier:multiple_subjects' => "%s and %s autres utilisateurs",
+	'notifier:multiple_subjects' => "%s et %s autres utilisateurs",
 
 	// Likes plugin
 	'likes:notifications:summary' => "%s aiment votre post %s",
-	'likes:notifications:summary:2' => "%s and %s aiment votre post %s",
+	'likes:notifications:summary:2' => "%s et %s aiment votre post %s",
 	'likes:notifications:summary:n' => "%s aiment votre post %s",
 
 	// Friends
 	'friend:notifications:summary' => "%s a fait de vous un contact",
-	'friend:notifications:summary:2' => "%s and %s ont fait de vous un contact",
+	'friend:notifications:summary:2' => "%s et %s ont fait de vous un contact",
 	'friend:notifications:summary:n' => "%s ont fait de vous un contact",
 
 	// Comments
 	'comment:notifications:summary' => "%s a commenté %s",
-	'comment:notifications:summary:2' => "%s and %s ont commenté %s",
+	'comment:notifications:summary:2' => "%s et %s ont commenté %s",
 	'comment:notifications:summary:n' => "%s a commenté %s",
 
 	// Groups
