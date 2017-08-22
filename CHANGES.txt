@@ -1,3 +1,9 @@
+Version 2.0.1 (2017-08-22)
+
+ Features
+  * Adds support for special use case where the notification target is a user
+  * Adds French translations
+
 Version 2.0.0 (2016-11-17)
 
  Contains only internal changes, so there is no changelog
