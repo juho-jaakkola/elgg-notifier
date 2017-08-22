@@ -176,6 +176,8 @@ function notifier_notification_send($hook, $type, $result, $params) {
 				// that it will get automatically mapped to the
 				// 'notifier/messages/create/relationship/friend' view.
 				$description = 'create:relationship:friend';
+			} else {
+				$entity = $object;
 			}
 
 			break;
