@@ -39,12 +39,6 @@ function notifier_init () {
 
 	elgg_register_event_handler('create', 'user', 'notifier_enable_for_new_user');
 	elgg_register_event_handler('join', 'group', 'notifier_enable_for_new_group_member');
-
-	$action_path = elgg_get_plugins_path() . 'notifier/actions/notifier/';
-	elgg_register_action('notifier/dismiss', $action_path . 'dismiss.php');
-	elgg_register_action('notifier/dismiss_one', $action_path . 'dismiss_one.php');
-	elgg_register_action('notifier/clear', $action_path . 'clear.php');
-	elgg_register_action('notifier/delete', $action_path . 'delete.php');
 }
 
 /**
@@ -85,10 +79,11 @@ function notifier_topbar_menu_setup ($hook, $type, $return, $params) {
 		'name' => 'notifier',
 		'href' => '#notifier-popup',
 		'text' => $text,
+		'icon' => 'globe',
 		'priority' => 600,
 		'title' => $tooltip,
 		'rel' => 'popup',
-		'id' => 'notifier-popup-link'
+		'id' => 'notifier-popup-link',
 	));
 
 	$return[] = $item;
@@ -339,7 +334,7 @@ function notifier_cron ($hook, $type, $return, $params) {
  */
 function notifier_set_view_listener () {
 	$dbprefix = elgg_get_config('dbprefix');
-	$types = get_data("SELECT * FROM {$dbprefix}entity_subtypes");
+	$types = get_data("SELECT DISTINCT(subtype) FROM {$dbprefix}entities");
 
 	// These subtypes do not have notifications so they can be skipped
 	$skip = array(
