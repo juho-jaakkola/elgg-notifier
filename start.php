@@ -144,7 +144,7 @@ function notifier_notification_send($hook, $type, $result, $params) {
 	$event = $params['event'];
 	/* @var Elgg_Notifications_Event $event */
 
-	if (!$event) {
+	if (!$event || !$event->getObject()) {
 		// Plugin is calling notify_user() so stop here and let
 		// the NotificationService handle the notification later.
 		return false;
